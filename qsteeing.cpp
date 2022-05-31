@@ -39,7 +39,7 @@ void QSteeing::drawControl(ControlElement element, const QStyleOption* option, Q
                 painter->setPen(0x89cfff);
                 painter->setBrush(QBrush(0x89cfff));
                 QRect nrct = allRect.adjusted(6, 6, -6, -6);
-                painter->drawRect(allRect.adjusted(6, 6, -6, -6));
+                painter->drawRect(nrct);
                 painter->restore();
             }
             QTextOption option;

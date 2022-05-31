@@ -28,15 +28,21 @@ SOURCES += \
         mainwindow.cpp \
     user.cpp \
     manager.cpp \
-    qsteeing.cpp
+    qsteeing.cpp \
+    specifications.cpp
 
 HEADERS += \
         mainwindow.h \
     user.h \
     manager.h \
-    qsteeing.h
+    qsteeing.h \
+    specifications.h
 
 FORMS += \
         mainwindow.ui \
     user.ui \
-    manager.ui
+    manager.ui \
+    specifications.ui
+
+RESOURCES += \
+    image.qrc
