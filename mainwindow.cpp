@@ -1,55 +1,55 @@
 #include "mainwindow.h"
 #include "manager.h"
-#include "user.h"
+#include "userWindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
-{
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
-
-    //密码方式显示文本
-    ui->password_lineEdit->setEchoMode(QLineEdit::Password);
+    ui->password_lineEdit->setEchoMode(QLineEdit::Password);    // 密码方式显示文本
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow(){
     delete ui;
 }
 
-void MainWindow::on_logging_Btn_clicked()
-{
+void MainWindow::on_logging_Btn_clicked(){
     //合法性检测
-    if((ui->name_lineEdit->text()=="")||(ui->password_lineEdit->text()==""))
-    {
-        QMessageBox::information(this,tr("警告"),tr("输入不能为空！"),QMessageBox::Ok);
+    if((ui->name_lineEdit->text() == "") || (ui->password_lineEdit->text() == "")){
+        QMessageBox::information(this, tr("警告"), tr("输入不能为空！"), QMessageBox::Ok);
         return;
     }
 
     //用户名密码匹配
     QString name= ui->name_lineEdit->text();
-    QString passward=ui->password_lineEdit->text();
+    QString password=ui->password_lineEdit->text();
 
     //管理者界面
-    if(name=="admin"&&passward=="admin")
-    {
+    if(name == "admin" && password == "admin"){
         this->hide();
-        manager *m=new manager(this);
+        manager *m = new manager(this);
         m->show();
         return;
     }
-    //用户界面
-    else if(name=="123"&&passward=="123")
-    {
-        this->hide();
-        user *u=new user(this);
-        u->show();
+
+    // 登陆
+    this->sql.query = new QSqlQuery;
+    QString str = QString("select * from UserTbl where name = '%1' and Upassword = '%2'").arg(name, password);
+    this->sql.query->exec(str);
+    if(!this->sql.query->first()){
+        QMessageBox::information(this, tr("错误"), tr("登陆失败！"), QMessageBox::Ok);
         return;
     }
+
+    this->usr.name = name;
+    this->usr.password = password;
+    this->usr.phone = this->sql.query->value(2).toString();
+
+    //用户界面
+    this->hide();
+    userWindow *u =new userWindow(this);
+    u->show();
 }
 
-void MainWindow::on_exit_Btn_clicked()
-{
+void MainWindow::on_exit_Btn_clicked(){
     this->close();
 }

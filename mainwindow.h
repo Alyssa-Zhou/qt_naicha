@@ -3,13 +3,13 @@
 
 #include <QMainWindow>
 #include <QMessageBox>
+#include "sql.h"
 
-namespace Ui {
-class MainWindow;
-}
+namespace Ui { class MainWindow; }
 
-class MainWindow : public QMainWindow
-{
+// TODO: 新增注册用户界面，输入名称，密码，手机号，创建UserInfo对象并使用Sql::updateUser，如果用户已存在则报错
+
+class MainWindow : public QMainWindow{
     Q_OBJECT
 
 public:
@@ -18,11 +18,12 @@ public:
 
 private slots:
     void on_logging_Btn_clicked();
-
     void on_exit_Btn_clicked();
 
 private:
     Ui::MainWindow *ui;
+    Sql sql;                    // 数据库
+    UserInfo usr;
 };
 
 #endif // MAINWINDOW_H

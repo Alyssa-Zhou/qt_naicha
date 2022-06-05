@@ -3,7 +3,7 @@
 
 #include <QProxyStyle>
 #include <QStyleOptionTab>
-#include "user.h"
+#include "userWindow.h"
 class QSteeing : public QProxyStyle
 {
     Q_OBJECT
