@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
+
 #include <QMainWindow>
 #include <QMessageBox>
 #include "sql.h"
@@ -15,6 +17,9 @@ class MainWindow : public QMainWindow{
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    Sql sql;                    // 数据库
+    UserInfo usr;
+
 
 private slots:
     void on_logging_Btn_clicked();
@@ -22,8 +27,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    Sql sql;                    // 数据库
-    UserInfo usr;
+
 };
 
 #endif // MAINWINDOW_H

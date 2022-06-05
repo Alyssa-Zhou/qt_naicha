@@ -9,11 +9,12 @@ Sql::Sql(){
     db.setPassword("password");
     db.setDatabaseName("Milk Tea");*/
     if(db.open()){
-        qDebug() << "Database connected successfully!" << Qt::endl;
+        qDebug() << "Database connected successfully!";
         createTables();
+        addData();
     }
     else 
-        qDebug() << "Database connected failed!" << Qt::endl;
+        qDebug() << "Database connected failed!";
 }
 
 // 创建数据表
@@ -54,6 +55,7 @@ void Sql::createTables(){
 bool Sql::addUser(UserInfo *usr){
     query = new QSqlQuery;
     QString str = QString("insert into UserTbl values('%1', '%2', '%3')").arg(usr->name, usr->password, usr->phone);
+    qDebug()<<"addUser";
     return query->exec(str);
 }
 
@@ -62,6 +64,7 @@ bool Sql::addGoods(Goods *good){
     query = new QSqlQuery;
     QString str = QString("insert into GoodsTbl values('%1', '%2', '%3', '%4', '%5')").arg(good->name)
                     .arg(good->ID).arg(good->price).arg(good->introduction).arg(good->photoPath);
+    qDebug()<<"addGoods";
     return query->exec(str);
 }
 
@@ -78,26 +81,43 @@ bool Sql::addOrder(Order *order){
 // NOTE: 查找商品，每当商品列表或筛选条件有变化，调用此函数更新页面
 void Sql::selectGoods(QString name = "", int id = (int)NULL, int minPrice = 0, int maxPrice = INTMAX){
     query = new QSqlQuery;
-    QString str = QString("selece * from GoodsTbl where (price between %1 and %2)").arg(minPrice).arg(maxPrice);
+    QString str = QString("select * from GoodsTbl where (price between %1 and %2)").arg(minPrice).arg(maxPrice);
     if(name != "") str = str.append(QString(" and (name = '%1')").arg(name));
-    if(id != (int)NULL) str = str.append(QString(" and (id == %1)").arg(id));
+    if(id != (int)NULL) str = str.append(QString(" and (id = %1)").arg(id));
+    qDebug()<<str;
     query->exec(str);
-
+    qDebug()<<"selectGoods";
     // 如果无，显示没有查找到符合条件的商品的页面
     if(!query->first()){
         // TODO: 添加没有查找到符合条件的商品的页面
+        qDebug()<<"no goods";
         return;
     }
 
     // 显示每一项
+    int cnt=0;//计数
+    //设置表头
+    model->setColumnCount(5);
+    model->setHeaderData(0,Qt::Horizontal, "商品名称");
+    model->setHeaderData(1,Qt::Horizontal, "ID");
+    model->setHeaderData(2,Qt::Horizontal, "价格");
+    model->setHeaderData(3,Qt::Horizontal, "简介");
+    model->setHeaderData(4,Qt::Horizontal, "图片");
+
     while(query->next()){
         QString name = query->value(0).toString();
         int ID = query->value(1).toInt();
         int price = query->value(2).toInt();
         QString introduction = query->value(3).toString();
         QString photoPath = query->value(4).toString();
-        // TODO: 显示这一项的内容页面
 
+        // TODO: 显示这一项的内容页面
+        for(int i=0;i<5;i++){
+            model->setItem(cnt,i,new QStandardItem(query->value(i).toString()));
+        }
+        cnt++;
+
+        qDebug()<<name<<ID<<price<<introduction<<photoPath;
     }
 
 }
@@ -107,6 +127,7 @@ void Sql::selectOrder(QString minDate = "0000/01/01", QString maxDate = "9999/01
     query = new QSqlQuery;
     QString str = QString("select * from OrderTbl where (orderDate between '%1' and '%2')").arg(minDate, maxDate);
     if(clientName != "") str = str.append(QString(" and (clientName = '%1')").arg(clientName));
+    qDebug()<<str;
     query->exec(str);
 
     // 如果无，显示没有查找到符合条件的商品的页面
@@ -116,6 +137,21 @@ void Sql::selectOrder(QString minDate = "0000/01/01", QString maxDate = "9999/01
     }
 
     // 显示每一项
+
+        // 显示每一项
+    int cnt=0;//计数
+    //设置表头
+    model1->setColumnCount(10);
+    model1->setHeaderData(0,Qt::Horizontal, "订单ID");
+    model1->setHeaderData(1,Qt::Horizontal, "用户名");
+    model1->setHeaderData(2,Qt::Horizontal, "日期");
+    model1->setHeaderData(3,Qt::Horizontal, "时间");
+    model1->setHeaderData(4,Qt::Horizontal, "商品ID");
+    model1->setHeaderData(5,Qt::Horizontal, "杯型");
+    model1->setHeaderData(6,Qt::Horizontal, "温度");
+    model1->setHeaderData(7,Qt::Horizontal, "甜度");
+    model1->setHeaderData(8,Qt::Horizontal, "备注");
+    model1->setHeaderData(9,Qt::Horizontal, "订单状态");
     while(query->next()){
         int orderID = query->value(0).toInt();
         QString clientName = query->value(1).toString();
@@ -129,7 +165,11 @@ void Sql::selectOrder(QString minDate = "0000/01/01", QString maxDate = "9999/01
         QString orderState = query->value(9).toString();
 
         // TODO: 显示这一项的内容页面
-
+        for(int i=0;i<10;i++){
+            model1->setItem(cnt,i,new QStandardItem(query->value(i).toString()));
+            qDebug()<<query->value(i).toString();
+        }
+        cnt++;
     }
 }
 
@@ -138,21 +178,37 @@ void Sql::selectUser(QString name=""){
     query = new QSqlQuery;
     QString str = QString("select * from UserTbl");
     if(name != "") str = str.append(" where name = '%1'").arg(name);
+    qDebug()<<str;
     query->exec(str);
 
     // 如果无，显示没有查找到符合条件的商品的页面
     if(!query->first()){
         // TODO: 添加没有查找到符合条件的商品的页面
+        qDebug()<<"no user";
         return;
     }
 
     // 显示每一项
+    int cnt=0;//计数
+    //设置表头
+    model2->setColumnCount(3);
+    model2->setHeaderData(0,Qt::Horizontal, "用户名");
+    model2->setHeaderData(1,Qt::Horizontal, "ID");
+    model2->setHeaderData(2,Qt::Horizontal, "电话号码");
+
     while(query->next()){
         QString name = query->value(0).toString();
         QString Upassword = query->value(1).toString();
         QString phone = query->value(2).toString();
 
         // TODO: 显示这一项的内容页面
+
+        for(int i=0;i<3;i++){
+            model2->setItem(cnt,i,new QStandardItem(query->value(i).toString()));
+            qDebug()<<query->value(i).toString();
+        }
+        cnt++;
+        qDebug()<<name<<Upassword<<phone;
     }
 
 }
@@ -203,4 +259,23 @@ bool Sql::deleteGoods(int id){
 bool Sql::deleteOrder(int id){
     query = new QSqlQuery;
     return query->exec(QString("delete from OrderTbl where ID = %1").arg(id));
+}
+
+void Sql::addData(){
+
+    UserInfo usr2(QString("user2"), QString("123"), QString("12345678911"));
+    UserInfo usr3(QString("user3"), QString("123"), QString("12345678911"));
+    if(!addUser(&usr2)) qDebug()<<"err";
+    if(!addUser(&usr3)) qDebug()<<"err";
+
+    Goods g1(QString("芋泥啵啵"),100,15, QString(""),QString(""));
+    Goods g2(QString("芝芝莓莓"),101,14, QString(""),QString(""));
+    Goods g3(QString("经典奶茶"),102,10, QString(""),QString(""));
+    if(!addGoods(&g1)) qDebug()<<"err";
+    if(!addGoods(&g2)) qDebug()<<"err";
+    if(!addGoods(&g3)) qDebug()<<"err";
+
+    //有点问题
+    Order o1(001,QString("user1"),QString("20220101"),QString("144511"),101,QString('medium'),QString('few-ice'),QString('half'),QString(""),QString('making'));
+    if(!addOrder(&o1)) qDebug()<<"err";
 }

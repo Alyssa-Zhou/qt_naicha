@@ -43,9 +43,9 @@ HEADERS += \
 
 FORMS += \
         mainwindow.ui \
-    user.ui \
     manager.ui \
-    specifications.ui
+    specifications.ui \
+    user.ui
 
 RESOURCES += \
     image.qrc

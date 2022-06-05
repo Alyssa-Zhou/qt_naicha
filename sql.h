@@ -5,6 +5,7 @@
 #include <QSqlDatabase>
 #include <QDebug>
 #include <QSqlQuery>
+#include <QStandardItemModel>
 
 #define INTMAX 0x3f3f3f3f
 
@@ -55,8 +56,12 @@ public:
     bool deleteUser(QString name);
     bool deleteGoods(int id);
     bool deleteOrder(int id);
-
+    void addData();
     QSqlQuery *query;
+
+    QStandardItemModel* model=new QStandardItemModel();
+    QStandardItemModel* model1=new QStandardItemModel();
+    QStandardItemModel* model2=new QStandardItemModel();
 
 };
 

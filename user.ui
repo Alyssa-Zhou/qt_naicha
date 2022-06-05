@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>669</width>
-    <height>482</height>
+    <width>861</width>
+    <height>490</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>651</width>
+      <width>721</width>
       <height>421</height>
      </rect>
     </property>
@@ -38,8 +38,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>631</width>
-        <height>381</height>
+        <width>691</width>
+        <height>341</height>
        </rect>
       </property>
       <property name="tabPosition">
@@ -100,7 +100,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>348</width>
+           <width>352</width>
            <height>498</height>
           </rect>
          </property>
@@ -118,8 +118,8 @@
             <rect>
              <x>110</x>
              <y>40</y>
-             <width>201</width>
-             <height>51</height>
+             <width>163</width>
+             <height>34</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -193,13 +193,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-<<<<<<< Updated upstream
      <width>861</width>
-     <height>26</height>
-=======
-     <width>669</width>
      <height>23</height>
->>>>>>> Stashed changes
     </rect>
    </property>
   </widget>

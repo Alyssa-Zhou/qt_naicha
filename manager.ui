@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>744</width>
-    <height>489</height>
+    <width>636</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,12 +19,12 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>721</width>
+      <width>621</width>
       <height>451</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -68,7 +68,7 @@
        <rect>
         <x>10</x>
         <y>60</y>
-        <width>701</width>
+        <width>601</width>
         <height>351</height>
        </rect>
       </property>
@@ -112,7 +112,7 @@
      <widget class="QPushButton" name="btn_add">
       <property name="geometry">
        <rect>
-        <x>620</x>
+        <x>520</x>
         <y>20</y>
         <width>41</width>
         <height>23</height>
@@ -125,7 +125,7 @@
      <widget class="QPushButton" name="btn_delete">
       <property name="geometry">
        <rect>
-        <x>670</x>
+        <x>570</x>
         <y>20</y>
         <width>41</width>
         <height>23</height>
@@ -145,28 +145,8 @@
        <rect>
         <x>10</x>
         <y>60</y>
-        <width>701</width>
+        <width>601</width>
         <height>351</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="cb_selectRow2">
-      <property name="geometry">
-       <rect>
-        <x>50</x>
-        <y>20</y>
-        <width>91</width>
-        <height>22</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="cb_selectRel2">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>20</y>
-        <width>69</width>
-        <height>22</height>
        </rect>
       </property>
      </widget>
@@ -183,7 +163,7 @@
      <widget class="QPushButton" name="btn_selete2">
       <property name="geometry">
        <rect>
-        <x>670</x>
+        <x>570</x>
         <y>20</y>
         <width>41</width>
         <height>23</height>
@@ -196,7 +176,7 @@
      <widget class="QPushButton" name="btn_add2">
       <property name="geometry">
        <rect>
-        <x>620</x>
+        <x>520</x>
         <y>20</y>
         <width>41</width>
         <height>23</height>
@@ -229,7 +209,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>关键字：</string>
+       <string>用户名：</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_6">
@@ -245,6 +225,129 @@
        <string>筛选</string>
       </property>
      </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>20</y>
+        <width>54</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>起</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>20</y>
+        <width>54</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>止</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="minDate">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>20</y>
+        <width>61</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="maxDate">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>20</y>
+        <width>61</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_3">
+     <attribute name="title">
+      <string>用户管理</string>
+     </attribute>
+     <widget class="QTableView" name="tableView_3">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>601</width>
+        <height>351</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>54</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>用户名：</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="keyWord3">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>20</y>
+        <width>113</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_add2_2">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>20</y>
+        <width>41</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>增加</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_selete2_2">
+      <property name="geometry">
+       <rect>
+        <x>570</x>
+        <y>20</y>
+        <width>41</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>删除</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="bt_search2_2">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>20</y>
+        <width>51</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>搜索</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -253,7 +356,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>744</width>
+     <width>636</width>
      <height>23</height>
     </rect>
    </property>
