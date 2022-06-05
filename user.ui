@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>861</width>
-    <height>490</height>
+    <width>669</width>
+    <height>482</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>721</width>
+      <width>651</width>
       <height>421</height>
      </rect>
     </property>
@@ -38,8 +38,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>691</width>
-        <height>341</height>
+        <width>631</width>
+        <height>381</height>
        </rect>
       </property>
       <property name="tabPosition">
@@ -193,8 +193,13 @@
     <rect>
      <x>0</x>
      <y>0</y>
+<<<<<<< Updated upstream
      <width>861</width>
      <height>26</height>
+=======
+     <width>669</width>
+     <height>23</height>
+>>>>>>> Stashed changes
     </rect>
    </property>
   </widget>

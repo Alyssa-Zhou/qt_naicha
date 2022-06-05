@@ -12,3 +12,14 @@ manager::~manager()
 {
     delete ui;
 }
+
+void manager::on_btn_search_clicked()
+{
+    //search in database
+    QString curRow=ui->cb_selectRow->currentText();//
+    QString relationship=ui->cb_selectRel->currentText();
+    QString key=ui->keyWord->text();
+    //组成sql语句查找
+
+
+}

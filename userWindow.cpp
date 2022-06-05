@@ -86,6 +86,14 @@ void userWindow::fixedOptions(specifications *s, int y, int h){
     rbAddi2->move(rbAddi1->x() + rbAddi1->width() + 20, addiPos_h + 15);
     rbAddi3->move(rbAddi2->x() + rbAddi2->width() + 20, addiPos_h + 15);
     rbAddi4->move(rbAddi3->x() + rbAddi3->width() + 20, addiPos_h + 15);
+<<<<<<< Updated upstream
+=======
+    QButtonGroup *bgAddi = new QButtonGroup(s);
+    bgAddi->addButton(rbAddi1);
+    bgAddi->addButton(rbAddi2);
+    bgAddi->addButton(rbAddi3);
+    bgAddi->addButton(rbAddi4);
+>>>>>>> Stashed changes
 }
 
 void userWindow::on_spec_Btn_clicked(Goods *good){
