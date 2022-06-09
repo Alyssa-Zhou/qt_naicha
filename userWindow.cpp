@@ -4,16 +4,43 @@
 #include <QDebug>
 #include <QRadioButton>
 #include <QButtonGroup>
+#include <QScrollArea>
 
 userWindow::userWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::user){
     ui->setupUi(this);
     ui->tabWidget->tabBar()->setStyle(new QSteeing);
+
+    this->ptr=(MainWindow*)parentWidget();
+
+    this->init();
 }
 
 userWindow::~userWindow(){
     delete ui;
 }
+void userWindow::init(){
+    QWidget *sawc = ui->scrollAreaWidgetContents;
+    int pos_x = sawc->geometry().x()+20;
+    int pos_y = sawc->geometry().y()+20;
+
+    for (int i=1; i <= ptr->sql.countGoods(); i++){
+        QLabel *title = new QLabel(ptr->sql.findGood(i)->name,sawc);
+        QLabel *introduction = new QLabel(ptr->sql.findGood(i)->introduction,sawc);
+        QLabel *photoPath = new QLabel(ptr->sql.findGood(i)->photoPath,sawc);
+        QLabel *price = new QLabel("¥" + QString::number(ptr->sql.findGood(i)->price),sawc);
+
+        title->move(pos_x, pos_y + i*80);
+        introduction->move(pos_x,pos_y + 15 + i*80);
+        photoPath->move(pos_x, pos_y + 30 + i*80);
+        price->move(pos_x, pos_y + 45 + i*80);
+
+        QPushButton *spec_Btn = new QPushButton("选规格",sawc);
+        connect(spec_Btn, &QPushButton::clicked, this, [=](){on_spec_Btn_clicked(ptr->sql.findGood(i));});
+        spec_Btn->move(pos_x + 70, pos_y + 20 + i*80);
+    }
+}
+
 
 // 所有商品固定的选型
 void userWindow::fixedOptions(specifications *s, int y, int h){
@@ -100,7 +127,7 @@ void userWindow::on_spec_Btn_clicked(Goods *good){
     specifications *s = new specifications(this);
 
     // 设置窗口大小
-    int w = 400, h = 500;
+    int w = 550, h = 500;
     s->setFixedSize(w, h);
 
     // 添加图片
@@ -124,7 +151,7 @@ void userWindow::on_spec_Btn_clicked(Goods *good){
     // 添加按钮，加入购物车
     QPushButton *cart = new QPushButton(s);
     cart->setText(QString("￥%1 加入购物袋").arg(good->price));
-    cart->setFixedSize(400, 50);
+    cart->setFixedSize(w, 50);
     cart->move(0, s->height() - 50);
 
     // 固定选项
@@ -132,4 +159,10 @@ void userWindow::on_spec_Btn_clicked(Goods *good){
 
     // 显示窗口
     s->show();
+}
+
+void userWindow::closeEvent(QCloseEvent *event)
+{
+    this->hide();
+    this->parentWidget()->show();
 }

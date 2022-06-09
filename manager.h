@@ -16,6 +16,7 @@ class manager : public QMainWindow
 public:
     explicit manager(QWidget *parent = 0);
     ~manager();
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void on_btn_search_clicked();
@@ -39,9 +40,6 @@ private slots:
 
     void on_btn_selete2_clicked();
 
-    void on_btn_add2_2_clicked();
-
-    void on_btn_selete2_2_clicked();
 
 private:
     Ui::manager *ui;

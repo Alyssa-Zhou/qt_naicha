@@ -2,6 +2,7 @@
 #include "manager.h"
 #include "userWindow.h"
 #include "ui_mainwindow.h"
+#include "enroll.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
@@ -52,4 +53,10 @@ void MainWindow::on_logging_Btn_clicked(){
 
 void MainWindow::on_exit_Btn_clicked(){
     this->close();
+}
+
+void MainWindow::on_reg_Btn_clicked()
+{
+    enroll *e =new enroll(this);
+    e->show();
 }

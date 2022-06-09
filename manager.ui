@@ -309,32 +309,6 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="btn_add2_2">
-      <property name="geometry">
-       <rect>
-        <x>520</x>
-        <y>20</y>
-        <width>41</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>增加</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btn_selete2_2">
-      <property name="geometry">
-       <rect>
-        <x>570</x>
-        <y>20</y>
-        <width>41</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>删除</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="bt_search2_2">
       <property name="geometry">
        <rect>
@@ -357,7 +331,7 @@
      <x>0</x>
      <y>0</y>
      <width>636</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

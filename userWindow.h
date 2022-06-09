@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "specifications.h"
 #include "sql.h"
+#include "mainwindow.h"
 
 namespace Ui { class user; }
 
@@ -20,13 +21,17 @@ public:
     explicit userWindow(QWidget *parent = 0);
     ~userWindow();
 
+        void closeEvent(QCloseEvent *event);
+
 private slots:
     // NOTE: 选择任何一个商品的“选项”按钮时，它的回调函数都是这个，只是传入的Goods不一样
     void on_spec_Btn_clicked(Goods *good);
 
 private:
     void fixedOptions(specifications *s, int y, int h);
+    void init();
     Ui::user *ui;
+    MainWindow *ptr = NULL;
 
 };
 

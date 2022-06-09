@@ -27,7 +27,7 @@
      <string>奶茶点单系统</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -67,16 +67,23 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>160</x>
       <y>150</y>
       <width>77</width>
-      <height>54</height>
+      <height>83</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_4">
+     <item row="2" column="0">
+      <widget class="QPushButton" name="exit_Btn">
+       <property name="text">
+        <string>退出</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="0">
       <widget class="QPushButton" name="logging_Btn">
        <property name="text">
@@ -85,9 +92,9 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QPushButton" name="exit_Btn">
+      <widget class="QPushButton" name="reg_Btn">
        <property name="text">
-        <string>退出</string>
+        <string>注册</string>
        </property>
       </widget>
      </item>

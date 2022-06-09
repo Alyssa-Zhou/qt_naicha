@@ -31,7 +31,8 @@ SOURCES += \
     qsteeing.cpp \
     specifications.cpp \
     sql.cpp \
-    userWindow.cpp
+    userWindow.cpp \
+    enroll.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -39,13 +40,15 @@ HEADERS += \
     qsteeing.h \
     specifications.h \
     sql.h \
-    userWindow.h
+    userWindow.h \
+    enroll.h
 
 FORMS += \
         mainwindow.ui \
     manager.ui \
     specifications.ui \
-    user.ui
+    user.ui \
+    enroll.ui
 
 RESOURCES += \
     image.qrc

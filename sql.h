@@ -57,6 +57,11 @@ public:
     bool deleteGoods(int id);
     bool deleteOrder(int id);
     void addData();
+
+    bool findUser(QString name);
+    Goods* findGood(int id);
+    int countGoods();
+
     QSqlQuery *query;
 
     QStandardItemModel* model=new QStandardItemModel();

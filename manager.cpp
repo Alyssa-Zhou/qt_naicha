@@ -17,7 +17,7 @@ manager::manager(QWidget *parent) :
 
     this->InitComboBox();
 
-    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
 manager::~manager()
@@ -135,9 +135,6 @@ void manager::on_btn_delete_clicked()
 //修改【未完成】
 void manager::on_tableView_doubleClicked(const QModelIndex &index)
 {
-    //QString val = ptr->sql.model->data(index).toString();
-
-//    qDebug()<<"新增商品:"<<index<<index.row()<<ptr->sql.model->data(index).toString();
 
 }
 
@@ -189,24 +186,33 @@ void manager::on_btn_add2_clicked()
     form.addRow(value5, input5);
 
     QString value6 = QString("杯型：");
-    QLineEdit *input6 = new QLineEdit(&dialog);
+    QComboBox *input6 = new QComboBox(&dialog);
+    QStringList cupSize;
+       cupSize << "medium"<<"large"<<"x-large";
+    input6->addItems(cupSize);
     form.addRow(value6, input6);
 
     QString value7 = QString("温度：");
-    QLineEdit *input7 = new QLineEdit(&dialog);
+    QComboBox *input7 = new QComboBox(&dialog);
+    QStringList tmp;
+       tmp << "ice"<<"few-ice"<< "drop-ice"<< "warm"<< "hot";
+    input7->addItems(tmp);
     form.addRow(value7, input7);
 
-    QString value8 = QString("甜度：");
-    QLineEdit *input8 = new QLineEdit(&dialog);
-    form.addRow(value8, input8);
-
-    QString value9 = QString("备注：");
-    QLineEdit *input9 = new QLineEdit(&dialog);
+    QString value9 = QString("甜度：");
+    QComboBox *input9 = new QComboBox(&dialog);
+    QStringList swt;
+       swt << "normal"<<"seven"<<"half"<<"three"<<"zero";
+    input9->addItems(swt);
     form.addRow(value9, input9);
 
-    QString value10 = QString("状态：");
-    QLineEdit *input10 = new QLineEdit(&dialog);
-    form.addRow(value10, input10);
+    QString value8 = QString("加料：");
+    QComboBox *input8 = new QComboBox(&dialog);
+    QStringList ad;
+       ad<<"pearls"<<"coconut"<<"sago"<<"taro";
+    input8->addItems(ad);
+    form.addRow(value8, input8);
+
     // Add Cancel and OK button
     QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
         Qt::Horizontal, &dialog);
@@ -217,7 +223,7 @@ void manager::on_btn_add2_clicked()
     // Process when OK button is clicked
     if (dialog.exec() == QDialog::Accepted) {
         Order o1(input1->text().toInt(),input2->text(),input3->text(),input4->text(),input5->text().toInt()
-                 ,input6->text(),input7->text(),input8->text(),input9->text(),input10->text());
+                 ,input6->currentText(),input7->currentText(),input8->currentText(),input9->currentText(),QString("making"));
         ptr->sql.addOrder(&o1);
         ptr->sql.selectOrder("","","");
         ui->tableView_2->setModel(ptr->sql.model2);
@@ -251,18 +257,18 @@ void manager::on_btn_selete2_clicked()
 //搜索用户
 void manager::on_bt_search2_2_clicked()
 {
+    //search in database
+    QString key=ui->keyWord3->text();
+    //组成sql语句查找
+    qDebug()<<"search:"<<key;
 
+    ptr->sql.selectUser(key);
+    ui->tableView_3->setModel(ptr->sql.model2);
 }
 
-
-//新增用户
-void manager::on_btn_add2_2_clicked()
+void manager::closeEvent(QCloseEvent *event)
 {
-
+    this->hide();
+    this->parentWidget()->show();
 }
 
-//删除用户
-void manager::on_btn_selete2_2_clicked()
-{
-
-}
