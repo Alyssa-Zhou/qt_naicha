@@ -1,17 +1,18 @@
 #include "sql.h"
 #include <QMessageBox>
+#include <QCoreApplication>
+
 // Sql构造函数，初始化
 Sql::Sql(){
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    // 不知道是不是必要的，先注释掉
-    /*db.setHostName("127.0.0.1");
-    db.setUserName("admin");
-    db.setPassword("password");
-    db.setDatabaseName("Milk Tea");*/
+    //存储为文件 路径为\build-naicha-Desktop_Qt_5_9_1_MinGW_32bit-Debug\下
+    //第一次运行将addData取消注释
+    db.setDatabaseName("sqltest.db");
+
     if(db.open()){
         qDebug() << "Database connected successfully!";
         createTables();
-        addData();
+        //addData();
     }
     else 
         qDebug() << "Database connected failed!";
@@ -43,11 +44,11 @@ void Sql::createTables(){
                                     orderState enum('unpaid', 'making', 'waiting', 'completed') default 'unpaid')");
     
     // 添加管理员
-    UserInfo admin(QString("admin"), QString("admin"), QString("12345678911"));
-    addUser(&admin);
+//    UserInfo admin(QString("admin"), QString("admin"), QString("12345678911"));
+//    addUser(&admin);
 
-    UserInfo usr(QString("user1"), QString("123"), QString("12345678911"));
-    addUser(&usr);
+//    UserInfo usr(QString("user1"), QString("123"), QString("12345678911"));
+//    addUser(&usr);
 
 }
 
@@ -89,7 +90,6 @@ void Sql::selectGoods(QString name = "", int id = (int)NULL, int minPrice = 0, i
     qDebug()<<"selectGoods";
     // 如果无，显示没有查找到符合条件的商品的页面
     if(!query->first()){
-        // TODO: 添加没有查找到符合条件的商品的页面
         model->clear();
         qDebug()<<"no goods";
         return;
@@ -113,7 +113,6 @@ void Sql::selectGoods(QString name = "", int id = (int)NULL, int minPrice = 0, i
         QString introduction = query->value(3).toString();
         QString photoPath = query->value(4).toString();
 
-        // TODO: 显示这一项的内容页面
         for(int i=0;i<5;i++){
             model->setItem(cnt,i,new QStandardItem(query->value(i).toString()));
         }
@@ -134,7 +133,6 @@ void Sql::selectOrder(QString minDate = "0000/01/01", QString maxDate = "9999/01
 
     // 如果无，显示没有查找到符合条件的商品的页面
     if(!query->first()){
-        // TODO: 添加没有查找到符合条件的商品的页面
         model1->clear();
         qDebug()<<"no order";
         return;
@@ -145,16 +143,11 @@ void Sql::selectOrder(QString minDate = "0000/01/01", QString maxDate = "9999/01
     //设置表头
     model1->clear();
     model1->setColumnCount(10);
-    model1->setHeaderData(0,Qt::Horizontal, "订单ID");
-    model1->setHeaderData(1,Qt::Horizontal, "用户名");
-    model1->setHeaderData(2,Qt::Horizontal, "日期");
-    model1->setHeaderData(3,Qt::Horizontal, "时间");
-    model1->setHeaderData(4,Qt::Horizontal, "商品ID");
-    model1->setHeaderData(5,Qt::Horizontal, "杯型");
-    model1->setHeaderData(6,Qt::Horizontal, "温度");
-    model1->setHeaderData(7,Qt::Horizontal, "甜度");
-    model1->setHeaderData(8,Qt::Horizontal, "备注");
-    model1->setHeaderData(9,Qt::Horizontal, "订单状态");
+    char* header[]={"订单ID","用户名", "日期","时间","商品ID","杯型","温度","甜度","加料","订单状态"};
+    for(int j=0;j<10;j++){
+        model1->setHeaderData(j,Qt::Horizontal, header[j]);
+    }
+
     do{
         int orderID = query->value(0).toInt();
         QString clientName = query->value(1).toString();
@@ -167,7 +160,6 @@ void Sql::selectOrder(QString minDate = "0000/01/01", QString maxDate = "9999/01
         QString additionalIngredients = query->value(8).toString();
         QString orderState = query->value(9).toString();
 
-        // TODO: 显示这一项的内容页面
         for(int i=0;i<10;i++){
             model1->setItem(cnt,i,new QStandardItem(query->value(i).toString()));
             qDebug()<<query->value(i).toString();
@@ -186,7 +178,6 @@ void Sql::selectUser(QString name=""){
 
     // 如果无，显示没有查找到符合条件的商品的页面
     if(!query->first()){
-        // TODO: 添加没有查找到符合条件的商品的页面
         model2->clear();
         qDebug()<<"no user";
         return;
@@ -198,15 +189,13 @@ void Sql::selectUser(QString name=""){
     model2->clear();
     model2->setColumnCount(3);
     model2->setHeaderData(0,Qt::Horizontal, "用户名");
-    model2->setHeaderData(1,Qt::Horizontal, "ID");
+    model2->setHeaderData(1,Qt::Horizontal, "密码");
     model2->setHeaderData(2,Qt::Horizontal, "电话号码");
 
     while(query->next()){
         QString name = query->value(0).toString();
         QString Upassword = query->value(1).toString();
         QString phone = query->value(2).toString();
-
-        // TODO: 显示这一项的内容页面
 
         for(int i=0;i<3;i++){
             model2->setItem(cnt,i,new QStandardItem(query->value(i).toString()));
@@ -273,14 +262,14 @@ void Sql::addData(){
     if(!addUser(&usr2)) qDebug()<<"err";
     if(!addUser(&usr3)) qDebug()<<"err";
 
-    Goods g1(QString("芋泥啵啵"),1,15, QString("123"),QString("123"));
-    Goods g2(QString("芝芝莓莓"),2,14, QString("123"),QString("123"));
-    Goods g3(QString("经典奶茶"),3,10, QString("123"),QString("123"));
+    Goods g1(QString("多肉桃桃"),1,19, QString("优选当季新鲜水蜜桃，皮薄汁多，果肉柔软细嫩，桃香饱满，去皮去核新鲜现制，充分保留果感，清晰释放新鲜桃肉的甜净。搭配幽香琥珀兰，香甜醇净。"),QString("/Resources/多肉桃桃.jpg"));
+    Goods g2(QString("轻芒芒甘露"),2,18, QString("当季芒果香甜浓郁，加入红柚果粒、西米与胶原脆波波，口感丰富。芒果绿烟冰沙与椰浆的比例完美平衡，带来清新的热带之风。整体口感顺滑清新，爽快过瘾"),QString("/Resources/轻芒芒甘露.jpg"));
+    Goods g3(QString("多肉葡萄冻"),3,19, QString("2018年首创品种，当季夏黑葡萄精细处理，保留果肉完整口感。搭配清新绿妍茶底与弹弹冻，鲜爽可口"),QString("/Resources/多肉葡萄冻.jpg"));
     if(!addGoods(&g1)) qDebug()<<"err";
     if(!addGoods(&g2)) qDebug()<<"err";
     if(!addGoods(&g3)) qDebug()<<"err";
 
-    //有点问题
+    //BUG:插入失败
     Order o1(1,QString("user1"),QString("2022-01-01"),QString("14:45:11"),101,QString("medium"),QString("few-ice"),QString("half"),QString("pearls"),QString("making"));
     if(!addOrder(&o1)) qDebug()<<"err";
 }
