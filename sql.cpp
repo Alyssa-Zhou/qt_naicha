@@ -192,7 +192,7 @@ void Sql::selectUser(QString name=""){
     model2->setHeaderData(1,Qt::Horizontal, "密码");
     model2->setHeaderData(2,Qt::Horizontal, "电话号码");
 
-    while(query->next()){
+    do{
         QString name = query->value(0).toString();
         QString Upassword = query->value(1).toString();
         QString phone = query->value(2).toString();
@@ -203,7 +203,7 @@ void Sql::selectUser(QString name=""){
         }
         cnt++;
         qDebug()<<name<<Upassword<<phone;
-    }
+    }while(query->next());
 
 }
 
