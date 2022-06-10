@@ -3,6 +3,7 @@
 #include "qsteeing.h"
 #include <QDebug>
 #include <QRadioButton>
+#include <QPushButton>
 #include <QButtonGroup>
 #include <QScrollArea>
 
@@ -19,25 +20,35 @@ userWindow::userWindow(QWidget *parent)
 userWindow::~userWindow(){
     delete ui;
 }
+
 void userWindow::init(){
     QWidget *sawc = ui->scrollAreaWidgetContents;
-    int pos_x = sawc->geometry().x()+20;
-    int pos_y = sawc->geometry().y()+20;
+    int pos_x = sawc->geometry().x()+10;
+    int pos_y = sawc->geometry().y()+10;
+    int pic_size =75;
 
     for (int i=1; i <= ptr->sql.countGoods(); i++){
         QLabel *title = new QLabel(ptr->sql.findGood(i)->name,sawc);
-        QLabel *introduction = new QLabel(ptr->sql.findGood(i)->introduction,sawc);
-        QLabel *photoPath = new QLabel(ptr->sql.findGood(i)->photoPath,sawc);
-        QLabel *price = new QLabel("¥" + QString::number(ptr->sql.findGood(i)->price),sawc);
+        title->move(pic_size + 20, pos_y + (i-1)*80);
 
-        title->move(pos_x, pos_y + i*80);
-        introduction->move(pos_x,pos_y + 15 + i*80);
-        photoPath->move(pos_x, pos_y + 30 + i*80);
-        price->move(pos_x, pos_y + 45 + i*80);
+        QLabel *introduction = new QLabel(ptr->sql.findGood(i)->introduction,sawc);
+        introduction->resize(200, introduction->size().height());
+        introduction->setWordWrap(true);
+        introduction->setAlignment(Qt::AlignTop);
+        introduction->move(pic_size + 20,pos_y + 15 + (i-1)*80);
+
+        QLabel *price = new QLabel("¥" + QString::number(ptr->sql.findGood(i)->price),sawc);
+        price->move(pic_size + 20, pos_y + 60 + (i-1)*80);
+
+        QLabel *picture = new QLabel(sawc);
+        picture->setPixmap(QPixmap(ptr->sql.findGood(i)->photoPath));
+        picture->setScaledContents(true);
+        picture->resize(pic_size, pic_size);
+        picture->move(pos_x, pos_y + (i-1)*80);
 
         QPushButton *spec_Btn = new QPushButton("选规格",sawc);
         connect(spec_Btn, &QPushButton::clicked, this, [=](){on_spec_Btn_clicked(ptr->sql.findGood(i));});
-        spec_Btn->move(pos_x + 70, pos_y + 20 + i*80);
+        spec_Btn->move(200, pos_y + 50 + (i-1)*80);
     }
 }
 
@@ -54,10 +65,11 @@ void userWindow::fixedOptions(specifications *s, int y, int h){
     rbCup1->move(20, cupPos_h + 15);
     rbCup2->move(rbCup1->x() + rbCup1->width() + 20, cupPos_h + 15);
     rbCup3->move(rbCup2->x() + rbCup2->width() + 20, cupPos_h + 15);
-    QButtonGroup *bgCup = new QButtonGroup(s);
-    bgCup->addButton(rbCup1);
-    bgCup->addButton(rbCup2);
-    bgCup->addButton(rbCup3);
+
+    bgCup = new QButtonGroup(s);
+    bgCup->addButton(rbCup1, 1);
+    bgCup->addButton(rbCup2, 2);
+    bgCup->addButton(rbCup3, 3);
 
     // 添加选项，温度(冰量)
     int temPos_h = rbCup3->y() + rbCup3->height() + 15;
@@ -73,12 +85,13 @@ void userWindow::fixedOptions(specifications *s, int y, int h){
     rbTem3->move(rbTem2->x() + rbTem2->width() + 20, temPos_h + 15);
     rbTem4->move(rbTem3->x() + rbTem3->width() + 20, temPos_h + 15);
     rbTem5->move(rbTem4->x() + rbTem4->width() + 20, temPos_h + 15);
-    QButtonGroup *bgTem = new QButtonGroup(s);
-    bgTem->addButton(rbTem1);
-    bgTem->addButton(rbTem2);
-    bgTem->addButton(rbTem3);
-    bgTem->addButton(rbTem4);
-    bgTem->addButton(rbTem5);
+
+    bgTem = new QButtonGroup(s);
+    bgTem->addButton(rbTem1, 1);
+    bgTem->addButton(rbTem2, 2);
+    bgTem->addButton(rbTem3, 3);
+    bgTem->addButton(rbTem4, 4);
+    bgTem->addButton(rbTem5, 5);
 
     // 添加选项，甜度
     int sweetPos_h = rbTem5->y() + rbTem5->height() + 15;
@@ -94,12 +107,13 @@ void userWindow::fixedOptions(specifications *s, int y, int h){
     rbSweet3->move(rbSweet2->x() + rbSweet2->width() + 20, sweetPos_h + 15);
     rbSweet4->move(rbSweet3->x() + rbSweet3->width() + 20, sweetPos_h + 15);
     rbSweet5->move(rbSweet4->x() + rbSweet4->width() + 20, sweetPos_h + 15);
-    QButtonGroup *bgSweet = new QButtonGroup(s);
-    bgSweet->addButton(rbSweet1);
-    bgSweet->addButton(rbSweet2);
-    bgSweet->addButton(rbSweet3);
-    bgSweet->addButton(rbSweet4);
-    bgSweet->addButton(rbSweet5);
+
+    bgSweet = new QButtonGroup(s);
+    bgSweet->addButton(rbSweet1, 1);
+    bgSweet->addButton(rbSweet2, 2);
+    bgSweet->addButton(rbSweet3, 3);
+    bgSweet->addButton(rbSweet4, 4);
+    bgSweet->addButton(rbSweet5, 5);
 
     // 添加选项，配料
     int addiPos_h = rbSweet5->y() + rbSweet5->height() + 15;
@@ -114,12 +128,11 @@ void userWindow::fixedOptions(specifications *s, int y, int h){
     rbAddi3->move(rbAddi2->x() + rbAddi2->width() + 20, addiPos_h + 15);
     rbAddi4->move(rbAddi3->x() + rbAddi3->width() + 20, addiPos_h + 15);
 
-    QButtonGroup *bgAddi = new QButtonGroup(s);
-    bgAddi->addButton(rbAddi1);
-    bgAddi->addButton(rbAddi2);
-    bgAddi->addButton(rbAddi3);
-    bgAddi->addButton(rbAddi4);
-
+    bgAddi = new QButtonGroup(s);
+    bgAddi->addButton(rbAddi1, 1);
+    bgAddi->addButton(rbAddi2, 2);
+    bgAddi->addButton(rbAddi3, 3);
+    bgAddi->addButton(rbAddi4, 4);
 }
 
 void userWindow::on_spec_Btn_clicked(Goods *good){
@@ -127,14 +140,14 @@ void userWindow::on_spec_Btn_clicked(Goods *good){
     specifications *s = new specifications(this);
 
     // 设置窗口大小
-    int w = 550, h = 500;
+    int w = 550, h = 650;
     s->setFixedSize(w, h);
 
     // 添加图片
     QLabel *picture = new QLabel(s);
     picture->setPixmap(QPixmap(good->photoPath));
     picture->setScaledContents(true);
-    picture->resize(400, 150);
+    picture->resize(w, 250);
     picture->move(0,0);
 
     // 添加标题
@@ -153,12 +166,67 @@ void userWindow::on_spec_Btn_clicked(Goods *good){
     cart->setText(QString("￥%1 加入购物袋").arg(good->price));
     cart->setFixedSize(w, 50);
     cart->move(0, s->height() - 50);
+    connect(cart, &QPushButton::clicked, this, [=](){pushcart(good,index);});
 
     // 固定选项
     fixedOptions(s, describe->y(), describe->height());
 
     // 显示窗口
     s->show();
+}
+
+void userWindow::pushcart(Goods *good, int i){
+    if(bgCup->checkedId() == -1){
+        QMessageBox::information(this, tr("提示 "), tr("请选择杯型！"), QMessageBox::Ok);
+        return;
+    }
+    if(bgTem->checkedId() == -1){
+        QMessageBox::information(this, tr("提示 "), tr("请选择温度(冰量)！"), QMessageBox::Ok);
+        return;
+    }
+    if(bgSweet->checkedId() == -1){
+        QMessageBox::information(this, tr("提示 "), tr("请选择甜度！"), QMessageBox::Ok);
+        return;
+    }
+    if(bgAddi->checkedId() == -1){
+        QMessageBox::information(this, tr("提示 "), tr("请选择配料！"), QMessageBox::Ok);
+        return;
+    }
+
+    QMessageBox::information(this, tr("提示 "), tr("已加入购物车"), QMessageBox::Ok);
+
+    QString cup[3] = { "中杯", "大杯", "超大杯" };
+    QString tem[5] = { "正常冰", "少冰", "去冰", "常温", "热" };
+    QString sweet[5] = { "标准糖", "七分糖", "半糖", "三分糖", "零糖" };
+    QString add[4] = { "珍珠", "椰果", "西米", "芋圆"};
+
+    int cupid = bgCup->checkedId();
+    int temid = bgTem->checkedId();
+    int sweetid = bgSweet->checkedId();
+    int addid = bgAddi->checkedId();
+
+    QWidget *sawc2 = ui->scrollAreaWidgetContents_2;
+    int pos_x = sawc2->geometry().x()+10;
+    int pos_y = sawc2->geometry().y()+10;
+    int pic_size =75;
+
+    QLabel *title = new QLabel(good->name,sawc2);
+    QLabel *price = new QLabel("¥" + QString::number(good->price),sawc2);
+    title->move(pic_size + 20, pos_y + i*80);
+    price->move(pic_size + 20, pos_y + 60 + i*80);
+
+    QLabel *detail = new QLabel(sawc2);
+    QString detail_text = cup[cupid] + "、" + tem[temid] + "、" + sweet[sweetid] + "、" + add[addid];
+    detail->setText(detail_text);
+    detail->move(pic_size + 20,pos_y + 15 + i*80);
+
+    QLabel *picture = new QLabel(sawc2);
+    picture->setPixmap(QPixmap(good->photoPath));
+    picture->setScaledContents(true);
+    picture->resize(pic_size, pic_size);
+    picture->move(pos_x, pos_y + i*80);
+
+    index++;
 }
 
 void userWindow::closeEvent(QCloseEvent *event)

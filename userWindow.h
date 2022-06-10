@@ -5,6 +5,7 @@
 #include "specifications.h"
 #include "sql.h"
 #include "mainwindow.h"
+#include <QButtonGroup>
 
 namespace Ui { class user; }
 
@@ -26,12 +27,18 @@ public:
 private slots:
     // NOTE: 选择任何一个商品的“选项”按钮时，它的回调函数都是这个，只是传入的Goods不一样
     void on_spec_Btn_clicked(Goods *good);
+    void pushcart(Goods *good, int i);
 
 private:
     void fixedOptions(specifications *s, int y, int h);
     void init();
     Ui::user *ui;
     MainWindow *ptr = NULL;
+    QButtonGroup *bgCup;
+    QButtonGroup *bgTem;
+    QButtonGroup *bgSweet;
+    QButtonGroup *bgAddi;
+    int index = 0;
 
 };
 
