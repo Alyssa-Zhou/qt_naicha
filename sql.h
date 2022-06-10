@@ -8,6 +8,7 @@
 #include <QStandardItemModel>
 
 #define INTMAX 0x3f3f3f3f
+static int numGoods = 0, numOrder = 0;
 
 // 用户类
 struct UserInfo{
@@ -19,8 +20,8 @@ struct UserInfo{
 // 商品类
 struct Goods{
     Goods() {}
-    Goods(QString name, int ID, int p, QString introduction, QString photoPath)
-        :name(name), introduction(introduction), photoPath(photoPath), ID(ID), price(p){}
+    Goods(QString name, int p, QString introduction, QString photoPath)
+        :name(name), introduction(introduction), photoPath(photoPath), ID(numGoods + 1), price(p){}
     QString name, introduction, photoPath;
     int ID, price;
 };
@@ -28,8 +29,8 @@ struct Goods{
 // 订单类
 struct Order{
     Order(){}
-    Order(int ID, QString clientName, QString orderDate, QString orderTime, int goodsID, QString cupSize, QString temperature,
-            QString sweetness, QString additionalIngredients, QString state): ID(ID), goodsID(goodsID), clientName(clientName),
+    Order(QString clientName, QString orderDate, QString orderTime, int goodsID, QString cupSize, QString temperature,
+            QString sweetness, QString additionalIngredients, QString state): ID(numOrder + 1), goodsID(goodsID), clientName(clientName),
             orderDate(orderDate), orderTime(orderTime), cupSize(cupSize), temperature(temperature), sweetness(sweetness),
             additionalIngredients(additionalIngredients), state(state){ }
     int ID, goodsID;
@@ -45,9 +46,9 @@ public:
     bool addGoods(Goods *good);
     bool addOrder(Order *order);
 
-    void selectUser(QString name);
-    void selectGoods(QString name, int id, int minPrice, int maxPrice);
-    void selectOrder(QString minDate, QString maxDate, QString clientName);
+    void selectUser(QString name = "");
+    void selectGoods(QString name = "", int id = (int)NULL, int minPrice = 0, int maxPrice = INTMAX);
+    void selectOrder(QString clientName = "", QString minDate = "", QString maxDate = "");
 
     bool updateUser(UserInfo *usr);
     bool updateGoods(Goods *good);
@@ -64,10 +65,11 @@ public:
 
     QSqlQuery *query;
 
-    QStandardItemModel* model=new QStandardItemModel();
-    QStandardItemModel* model1=new QStandardItemModel();
-    QStandardItemModel* model2=new QStandardItemModel();
+    QStandardItemModel* model = new QStandardItemModel();
+    QStandardItemModel* model1 = new QStandardItemModel();
+    QStandardItemModel* model2 = new QStandardItemModel();
 
 };
+
 
 #endif
