@@ -39,6 +39,7 @@ private:
     QButtonGroup *bgSweet;
     QButtonGroup *bgAddi;
     int index = 0;
+    void checkout();
 
 };
 

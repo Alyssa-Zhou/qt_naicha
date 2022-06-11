@@ -229,6 +229,10 @@ void userWindow::pushcart(Goods *good, int i){
     index++;
 }
 
+void userWindow::checkout(){
+
+}
+
 void userWindow::closeEvent(QCloseEvent *event)
 {
     this->hide();
