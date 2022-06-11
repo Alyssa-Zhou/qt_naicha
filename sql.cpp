@@ -92,7 +92,7 @@ void Sql::createTables() {
                                     cupSize varchar(10) default 'medium',\
                                     temperature varchar(10) default 'warm',\
                                     sweetness varchar(10) default 'normal',\
-                                    additionalIngredients varchar(10) default 'pearls',\
+                                    additionalIngredients varchar(30) default 'null',\
                                     orderState varchar(10) default 'unpaid')");
 }
 
@@ -152,6 +152,7 @@ void Sql::selectGoods(QString name, int id, int minPrice, int maxPrice) {
         QStandardItem *item = new QStandardItem();
         item->setData(QVariant(QPixmap::fromImage(image)), Qt::DecorationRole);
         if(path != "") model->setItem(row, colNum, item);
+        // 有path知乎用下面这一句就行
         // if(path != "") model->setItem(row, colNum, new QStandardItem(QIcon(path), " "));
     }
 

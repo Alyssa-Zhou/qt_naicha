@@ -2,6 +2,7 @@
 #include "ui_user.h"
 #include "qsteeing.h"
 #include <QDebug>
+#include <QCheckBox>
 #include <QRadioButton>
 #include <QPushButton>
 #include <QButtonGroup>
@@ -52,87 +53,90 @@ void userWindow::init(){
     }
 }
 
-
+// NOTE: 原来ButtonGroup的ID是从1开始的，后面读数组从0开始，现已将ID修改为从0开始
 // 所有商品固定的选型
 void userWindow::fixedOptions(specifications *s, int y, int h){
+    int rowSep = 20, colSep = 15;
+
     // 添加选项，杯型
-    int cupPos_h = y + h + 20;
-    QLabel *cupLabel = new QLabel("甜度", s);
-    cupLabel->move(20, cupPos_h);
+    int cupPos_h = y + h + rowSep;
+    QLabel *cupLabel = new QLabel("杯型", s);
+    cupLabel->move(rowSep, cupPos_h);
     QRadioButton *rbCup1 = new QRadioButton("中杯(推荐)", s);
     QRadioButton *rbCup2 = new QRadioButton("大杯", s);
     QRadioButton *rbCup3 = new QRadioButton("超大杯", s);
-    rbCup1->move(20, cupPos_h + 15);
-    rbCup2->move(rbCup1->x() + rbCup1->width() + 20, cupPos_h + 15);
-    rbCup3->move(rbCup2->x() + rbCup2->width() + 20, cupPos_h + 15);
+    rbCup1->move(rowSep, cupPos_h + colSep);
+    rbCup2->move(rbCup1->x() + rbCup1->width() + rowSep, cupPos_h + colSep);
+    rbCup3->move(rbCup2->x() + rbCup2->width() + rowSep, cupPos_h + colSep);
 
     bgCup = new QButtonGroup(s);
-    bgCup->addButton(rbCup1, 1);
-    bgCup->addButton(rbCup2, 2);
-    bgCup->addButton(rbCup3, 3);
+    bgCup->addButton(rbCup1, 0);
+    bgCup->addButton(rbCup2, 1);
+    bgCup->addButton(rbCup3, 2);
 
     // 添加选项，温度(冰量)
-    int temPos_h = rbCup3->y() + rbCup3->height() + 15;
+    int temPos_h = rbCup3->y() + rbCup3->height() + colSep;
     QLabel *temLabel = new QLabel("温度", s);
-    temLabel->move(20, temPos_h);
+    temLabel->move(rowSep, temPos_h);
     QRadioButton *rbTem1 = new QRadioButton("正常冰(推荐)", s);
     QRadioButton *rbTem2 = new QRadioButton("少冰", s);
     QRadioButton *rbTem3 = new QRadioButton("去冰", s);
     QRadioButton *rbTem4 = new QRadioButton("常温", s);
     QRadioButton *rbTem5 = new QRadioButton("热", s);
-    rbTem1->move(20, temPos_h + 15);
-    rbTem2->move(rbTem1->x() + rbTem1->width() + 20, temPos_h + 15);
-    rbTem3->move(rbTem2->x() + rbTem2->width() + 20, temPos_h + 15);
-    rbTem4->move(rbTem3->x() + rbTem3->width() + 20, temPos_h + 15);
-    rbTem5->move(rbTem4->x() + rbTem4->width() + 20, temPos_h + 15);
+    rbTem1->move(rowSep, temPos_h + 15);
+    rbTem2->move(rbTem1->x() + rbTem1->width() + rowSep, temPos_h + colSep);
+    rbTem3->move(rbTem2->x() + rbTem2->width() + rowSep, temPos_h + colSep);
+    rbTem4->move(rbTem3->x() + rbTem3->width() + rowSep, temPos_h + colSep);
+    rbTem5->move(rbTem4->x() + rbTem4->width() + rowSep, temPos_h + colSep);
 
     bgTem = new QButtonGroup(s);
-    bgTem->addButton(rbTem1, 1);
-    bgTem->addButton(rbTem2, 2);
-    bgTem->addButton(rbTem3, 3);
-    bgTem->addButton(rbTem4, 4);
-    bgTem->addButton(rbTem5, 5);
+    bgTem->addButton(rbTem1, 0);
+    bgTem->addButton(rbTem2, 1);
+    bgTem->addButton(rbTem3, 2);
+    bgTem->addButton(rbTem4, 3);
+    bgTem->addButton(rbTem5, 4);
 
     // 添加选项，甜度
-    int sweetPos_h = rbTem5->y() + rbTem5->height() + 15;
+    int sweetPos_h = rbTem5->y() + rbTem5->height() + colSep;
     QLabel *sweetLabel = new QLabel("甜度", s);
-    sweetLabel->move(20, sweetPos_h);
+    sweetLabel->move(rowSep, sweetPos_h);
     QRadioButton *rbSweet1 = new QRadioButton("标准糖(推荐)", s);
     QRadioButton *rbSweet2 = new QRadioButton("七分糖", s);
     QRadioButton *rbSweet3 = new QRadioButton("半糖", s);
     QRadioButton *rbSweet4 = new QRadioButton("三分糖", s);
     QRadioButton *rbSweet5 = new QRadioButton("零糖", s);
-    rbSweet1->move(20, sweetPos_h + 15);
-    rbSweet2->move(rbSweet1->x() + rbSweet1->width() + 20, sweetPos_h + 15);
-    rbSweet3->move(rbSweet2->x() + rbSweet2->width() + 20, sweetPos_h + 15);
-    rbSweet4->move(rbSweet3->x() + rbSweet3->width() + 20, sweetPos_h + 15);
-    rbSweet5->move(rbSweet4->x() + rbSweet4->width() + 20, sweetPos_h + 15);
+    rbSweet1->move(rowSep, sweetPos_h + colSep);
+    rbSweet2->move(rbSweet1->x() + rbSweet1->width() + rowSep, sweetPos_h + colSep);
+    rbSweet3->move(rbSweet2->x() + rbSweet2->width() + rowSep, sweetPos_h + colSep);
+    rbSweet4->move(rbSweet3->x() + rbSweet3->width() + rowSep, sweetPos_h + colSep);
+    rbSweet5->move(rbSweet4->x() + rbSweet4->width() + rowSep, sweetPos_h + colSep);
 
     bgSweet = new QButtonGroup(s);
-    bgSweet->addButton(rbSweet1, 1);
-    bgSweet->addButton(rbSweet2, 2);
-    bgSweet->addButton(rbSweet3, 3);
-    bgSweet->addButton(rbSweet4, 4);
-    bgSweet->addButton(rbSweet5, 5);
+    bgSweet->addButton(rbSweet1, 0);
+    bgSweet->addButton(rbSweet2, 1);
+    bgSweet->addButton(rbSweet3, 2);
+    bgSweet->addButton(rbSweet4, 3);
+    bgSweet->addButton(rbSweet5, 4);
 
     // 添加选项，配料
-    int addiPos_h = rbSweet5->y() + rbSweet5->height() + 15;
+    int addiPos_h = rbSweet5->y() + rbSweet5->height() + colSep;
     QLabel *addiLabel = new QLabel("配料", s);
-    addiLabel->move(20, addiPos_h);
-    QRadioButton *rbAddi1 = new QRadioButton("珍珠", s);
-    QRadioButton *rbAddi2 = new QRadioButton("椰果", s);
-    QRadioButton *rbAddi3 = new QRadioButton("西米", s);
-    QRadioButton *rbAddi4 = new QRadioButton("芋圆", s);
-    rbAddi1->move(20, addiPos_h + 15);
-    rbAddi2->move(rbAddi1->x() + rbAddi1->width() + 20, addiPos_h + 15);
-    rbAddi3->move(rbAddi2->x() + rbAddi2->width() + 20, addiPos_h + 15);
-    rbAddi4->move(rbAddi3->x() + rbAddi3->width() + 20, addiPos_h + 15);
+    addiLabel->move(rowSep, addiPos_h);
+    QCheckBox *cbAddi1 = new QCheckBox("珍珠", s);
+    QCheckBox *cbAddi2 = new QCheckBox("椰果", s);
+    QCheckBox *cbAddi3 = new QCheckBox("西米", s);
+    QCheckBox *cbAddi4 = new QCheckBox("芋圆", s);
+    cbAddi1->move(rowSep, addiPos_h + colSep);
+    cbAddi2->move(cbAddi1->x() + cbAddi1->width() + rowSep, addiPos_h + colSep);
+    cbAddi3->move(cbAddi2->x() + cbAddi2->width() + rowSep, addiPos_h + colSep);
+    cbAddi4->move(cbAddi3->x() + cbAddi3->width() + rowSep, addiPos_h + colSep);
 
     bgAddi = new QButtonGroup(s);
-    bgAddi->addButton(rbAddi1, 1);
-    bgAddi->addButton(rbAddi2, 2);
-    bgAddi->addButton(rbAddi3, 3);
-    bgAddi->addButton(rbAddi4, 4);
+    bgAddi->setExclusive(false);        // 设置互斥模式为false
+    bgAddi->addButton(cbAddi1, 0);
+    bgAddi->addButton(cbAddi2, 1);
+    bgAddi->addButton(cbAddi3, 2);
+    bgAddi->addButton(cbAddi4, 3);
 }
 
 void userWindow::on_spec_Btn_clicked(Goods *good){
@@ -175,6 +179,7 @@ void userWindow::on_spec_Btn_clicked(Goods *good){
     s->show();
 }
 
+// 购物车
 void userWindow::pushcart(Goods *good, int i){
     if(bgCup->checkedId() == -1){
         QMessageBox::information(this, tr("提示 "), tr("请选择杯型！"), QMessageBox::Ok);
@@ -186,10 +191,6 @@ void userWindow::pushcart(Goods *good, int i){
     }
     if(bgSweet->checkedId() == -1){
         QMessageBox::information(this, tr("提示 "), tr("请选择甜度！"), QMessageBox::Ok);
-        return;
-    }
-    if(bgAddi->checkedId() == -1){
-        QMessageBox::information(this, tr("提示 "), tr("请选择配料！"), QMessageBox::Ok);
         return;
     }
 
@@ -216,7 +217,11 @@ void userWindow::pushcart(Goods *good, int i){
     price->move(pic_size + 20, pos_y + 60 + i*80);
 
     QLabel *detail = new QLabel(sawc2);
-    QString detail_text = cup[cupid] + "、" + tem[temid] + "、" + sweet[sweetid] + "、" + add[addid];
+    QString detail_text = cup[cupid] + "、" + tem[temid] + "、" + sweet[sweetid] + "、";
+    // 处理配料
+    for(int i = 0; i < 4; i++){
+        if(bgAddi->button(i)->isChecked()) detail_text += ("、" + add[addid]);
+    }
     detail->setText(detail_text);
     detail->move(pic_size + 20,pos_y + 15 + i*80);
 

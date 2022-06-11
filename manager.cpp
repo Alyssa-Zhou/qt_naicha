@@ -136,7 +136,6 @@ void manager::on_btn_searchO_clicked()
     //组成sql语句查找
     qDebug() << "search:" << minDate << maxDate << key;
 
-    // TODO: 显示界面(查询结果bug已修复)
     ptr->sql.selectOrder(key, minDate, maxDate);
     ui->tableView_2->setModel(ptr->sql.model1);
 }
