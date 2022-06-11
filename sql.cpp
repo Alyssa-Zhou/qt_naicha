@@ -1,15 +1,15 @@
 #include "sql.h"
 #include <QMessageBox>
+#include <QCoreApplication>
 
 // Sql构造函数，初始化
 Sql::Sql() {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    // db.setDatabaseName("milkTea.db");       // 存储为文件
-    // 不知道是不是必要的，先注释掉
-    /*db.setHostName("127.0.0.1");
-    db.setUserName("admin");
-    db.setPassword("password");*/
-    if (db.open()) {
+    //存储为文件 路径为\build-naicha-Desktop_Qt_5_9_1_MinGW_32bit-Debug\下
+    //第一次运行将addData取消注释，之后无需再添加数据即可注释掉
+    db.setDatabaseName("sqltest.db");
+
+    if(db.open()){
         qDebug() << "Database connected successfully!";
         createTables();
         addData();
@@ -65,11 +65,11 @@ void Sql::createTables() {
                                     orderState varchar(10) default 'unpaid')");
 
     // 添加管理员
-    UserInfo admin(QString("admin"), QString("admin"), QString("12345678911"));
-    addUser(&admin);
+//    UserInfo admin(QString("admin"), QString("admin"), QString("12345678911"));
+//    addUser(&admin);
 
-    UserInfo usr(QString("user1"), QString("123"), QString("12345678911"));
-    addUser(&usr);
+//    UserInfo usr(QString("user1"), QString("123"), QString("12345678911"));
+//    addUser(&usr);
 
 }
 
@@ -166,20 +166,15 @@ void Sql::selectOrder(QString clientName, QString minDate, QString maxDate) {
     //设置表头
     model1->clear();
     model1->setColumnCount(10);
-    model1->setHeaderData(0, Qt::Horizontal, "订单ID");
-    model1->setHeaderData(1, Qt::Horizontal, "用户名");
-    model1->setHeaderData(2, Qt::Horizontal, "日期");
-    model1->setHeaderData(3, Qt::Horizontal, "时间");
-    model1->setHeaderData(4, Qt::Horizontal, "商品ID");
-    model1->setHeaderData(5, Qt::Horizontal, "杯型");
-    model1->setHeaderData(6, Qt::Horizontal, "温度");
-    model1->setHeaderData(7, Qt::Horizontal, "甜度");
-    model1->setHeaderData(8, Qt::Horizontal, "备注");
-    model1->setHeaderData(9, Qt::Horizontal, "订单状态");
-    do {
-        for (int i = 0; i < 10; i++) {
-            model1->setItem(cnt, i, new QStandardItem(query->value(i).toString()));
-            qDebug() << query->value(i).toString();
+    QStringList header = {"订单ID","用户名", "日期","时间","商品ID","杯型","温度","甜度","加料","订单状态"};
+    for(int j=0;j<10;j++){
+        model1->setHeaderData(j,Qt::Horizontal, header[j]);
+    }
+
+    do{
+        for(int i=0;i<10;i++){
+            model1->setItem(cnt,i,new QStandardItem(query->value(i).toString()));
+            qDebug()<<query->value(i).toString();
         }
         cnt++;
     } while (query->next());
@@ -272,21 +267,27 @@ bool Sql::deleteOrder(int id) {
     return query->exec(QString("delete from OrderTbl where ID = %1").arg(id));
 }
 
-void Sql::addData() {
-    UserInfo usr2("user2", "123", "12345678911");
-    UserInfo usr3("user3", "123", "12345678911");
-    if (!addUser(&usr2)) qDebug() << "err";
-    if (!addUser(&usr3)) qDebug() << "err";
+void Sql::addData(){
 
-    Goods g1("芋泥啵啵", 15, "123", "123");
-    Goods g2("芝芝莓莓", 14, "123", "123");
-    Goods g3("经典奶茶", 10, "123", "123");
-    if (!addGoods(&g1)) qDebug() << "err";
-    if (!addGoods(&g2)) qDebug() << "err";
-    if (!addGoods(&g3)) qDebug() << "err";
+    UserInfo usr2(QString("user2"), QString("123"), QString("12345678911"));
+    UserInfo usr3(QString("user3"), QString("123"), QString("12345678911"));
+    if(!addUser(&usr2)) qDebug()<<"err";
+    if(!addUser(&usr3)) qDebug()<<"err";
 
-    Order o1("user1", "芋泥啵啵", "2022-01-01", "14:45:11", "medium", "few-ice", "half", "pearls", "making");
+    Goods g1(QString("多肉桃桃"),19, QString("优选当季新鲜水蜜桃，皮薄汁多，果肉柔软细嫩，桃香饱满，去皮去核新鲜现制，充分保留果感，清晰释放新鲜桃肉的甜净。搭配幽香琥珀兰，香甜醇净。"),QString("/Resources/多肉桃桃.jpg"));
+    Goods g2(QString("轻芒芒甘露"),18, QString("当季芒果香甜浓郁，加入红柚果粒、西米与胶原脆波波，口感丰富。芒果绿烟冰沙与椰浆的比例完美平衡，带来清新的热带之风。整体口感顺滑清新，爽快过瘾"),QString("/Resources/轻芒芒甘露.jpg"));
+    Goods g3(QString("多肉葡萄冻"),19, QString("2018年首创品种，当季夏黑葡萄精细处理，保留果肉完整口感。搭配清新绿妍茶底与弹弹冻，鲜爽可口"),QString("/Resources/多肉葡萄冻.jpg"));
+    if(!addGoods(&g1)) qDebug()<<"err";
+    if(!addGoods(&g2)) qDebug()<<"err";
+    if(!addGoods(&g3)) qDebug()<<"err";
+
+    // BUG: 增加第一条之后的记录就会失败
+    Order o1("user1", "芋泥啵啵", "2022-01-01", "14:45:11", "medium", "few-ice", "half", "pearls", "down");
     if (!addOrder(&o1)) qDebug() << "err";
+    Order o2("user1", "多肉桃桃", "2022-01-01", "14:45:00", "large", "few-ice", "half", "pearls", "making");
+    if (!addOrder(&o2)) qDebug() << "err";
+    Order o3("user1", "经典奶茶", "2022-01-02", "13:45:11", "medium", "few-ice", "half", "pearls", "making");
+    if (!addOrder(&o3)) qDebug() << "err";
 }
 
 // 注册查找用户，防止重复

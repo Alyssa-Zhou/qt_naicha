@@ -4,18 +4,25 @@
 #include <QFormLayout>
 #include <QDialogButtonBox>
 #include <QTextEdit>
+#include <QFileDialog>
 
 manager::manager(QWidget* parent) : QMainWindow(parent), ui(new Ui::manager) {
     ui->setupUi(this);
     this->ptr = (MainWindow*)parentWidget();
     this->ptr->sql.selectGoods("", (int)NULL, 0, 100);
     this->InitComboBox();
+
+    //表格列宽自适应
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableView_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableView_3->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 manager::~manager() { delete ui; }
 
 //搜索商品
-void manager::on_btn_search_clicked() {
+void manager::on_btn_searchG_clicked()
+{
     //search in database
     QString curRow = ui->cb_selectRow->currentText();//
     QString relationship = ui->cb_selectRel->currentText();
@@ -46,12 +53,9 @@ void manager::InitComboBox() {
     ui->cb_selectRel->addItem("大于");
 }
 
-void manager::on_btn_fresh_clicked() {
-    ptr->sql.selectUser("");
-}
-
 //增加商品
-void manager::on_btn_add_clicked(){
+void manager::on_btn_addG_clicked()
+{
     QDialog dialog(this);
     QFormLayout form(&dialog);
     form.addRow(new QLabel("上架奶茶："));
@@ -59,10 +63,6 @@ void manager::on_btn_add_clicked(){
     QString value1 = QString("名称: ");
     QLineEdit* input1 = new QLineEdit(&dialog);
     form.addRow(value1, input1);
-    // Value2
-    QString value2 = QString("ID: ");
-    QLineEdit* input2 = new QLineEdit(&dialog);
-    form.addRow(value2, input2);
 
     QString value3 = QString("价格: ");
     QLineEdit* input3 = new QLineEdit(&dialog);
@@ -73,8 +73,13 @@ void manager::on_btn_add_clicked(){
     form.addRow(value4, input4);
 
     QString value5 = QString("图片：");
-    QLineEdit* input5 = new QLineEdit(&dialog);
-    form.addRow(value5, input5);
+    QPushButton *selectPicture = new QPushButton("选择",&dialog);
+    QString filePath="";
+    connect(selectPicture, &QPushButton::clicked, [&](){
+        filePath=on_selectPicture_clicked();
+        selectPicture->setText(filePath);       //按钮文字设为当前路径
+    });
+    form.addRow(value5, selectPicture);
 
     // Add Cancel and OK button
     QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
@@ -84,22 +89,21 @@ void manager::on_btn_add_clicked(){
 
     // Process when OK button is clicked
     if (dialog.exec() == QDialog::Accepted) {
-        Goods g1(input1->text(), input3->text().toInt(), input4->toPlainText(), input5->text());
+        Goods g1(input1->text(),input3->text().toInt(),input4->toPlainText(),filePath);
         ptr->sql.addGoods(&g1);
         ptr->sql.selectGoods("", (int)NULL, 0, 10000);
         ui->tableView->setModel(ptr->sql.model);
-        qDebug() << "新增商品:" << input1->text() << input2->text() << input3->text() << input4->toPlainText() << input5->text();
+        qDebug()<<"新增商品:"<<input1->text()<<input3->text()<<input4->toPlainText()<<filePath;
     }
 
 }
 
 //删除商品
-void manager::on_btn_delete_clicked()
+void manager::on_btn_deleteG_clicked()
 {
     QDialog dialog(this);
     QFormLayout form(&dialog);
     form.addRow(new QLabel("请输入想要删除的商品ID："));
-    // Value1
     QString value1 = QString("商品ID: ");
     QLineEdit* input1 = new QLineEdit(&dialog);
     form.addRow(value1, input1);
@@ -119,18 +123,9 @@ void manager::on_btn_delete_clicked()
     }
 }
 
-// TODO:修改
-void manager::on_tableView_doubleClicked(const QModelIndex& index) {
-
-}
-
-void manager::on_tableView_entered(const QModelIndex& index) {
-    QString val = ptr->sql.model->data(index).toString();
-    qDebug() << "新增商品:" << val;
-}
-
 //搜索订单
-void manager::on_bt_search2_clicked(){
+void manager::on_btn_searchO_clicked()
+{
     //search in database
     QString maxDate = ui->maxDate->text();
     QString minDate = ui->minDate->text();
@@ -144,7 +139,8 @@ void manager::on_bt_search2_clicked(){
 }
 
 //新增订单
-void manager::on_btn_add2_clicked(){
+void manager::on_btn_addO_clicked()
+{
     QDialog dialog(this);
     QFormLayout form(&dialog);
     form.addRow(new QLabel("添加订单："));
@@ -202,20 +198,21 @@ void manager::on_btn_add2_clicked(){
 
     // Process when OK button is clicked
     if (dialog.exec() == QDialog::Accepted) {
-        Order o1(input2->text(), input5->text(), input3->text(), input4->text()
-            , input6->currentText(), input7->currentText(), input8->currentText(), input9->currentText(), QString("making"));
-        ptr->sql.addOrder(&o1);
+        Order o1(input2->text(), input5->text(), input3->text(), input4->text(), input6->currentText(),
+                 input7->currentText(), input8->currentText(), input9->currentText(), QString("making"));
+        qDebug()<<"add Order:"<<input2->text()<< input3->text()<< input4->text()<< input5->text()
+                << input6->currentText()<< input7->currentText()<< input8->currentText()<<input9->currentText()<<QString("making");
+        if(ptr->sql.addOrder(&o1)) qDebug()<<"出错了！";
         ptr->sql.selectOrder("", "", "");
-        ui->tableView_2->setModel(ptr->sql.model2);
+        ui->tableView_2->setModel(ptr->sql.model1);
     }
 }
-
-// 删除订单
-void manager::on_btn_selete2_clicked(){
+//删除订单
+void manager::on_btn_deleteO_clicked()
+{
     QDialog dialog(this);
     QFormLayout form(&dialog);
     form.addRow(new QLabel("请输入想要删除的订单ID："));
-    // Value1
     QString value1 = QString("订单ID: ");
     QLineEdit* input1 = new QLineEdit(&dialog);
     form.addRow(value1, input1);
@@ -230,12 +227,13 @@ void manager::on_btn_selete2_clicked(){
         qDebug() << "删除订单:" << input1->text();
         ptr->sql.deleteOrder(input1->text().toInt());
         ptr->sql.selectOrder("", "", "");
-        ui->tableView_2->setModel(ptr->sql.model2);
+        ui->tableView_2->setModel(ptr->sql.model1);
     }
 }
 
 //搜索用户
-void manager::on_bt_search2_2_clicked(){
+void manager::on_btn_searchU_clicked()
+{
     //search in database
     QString key = ui->keyWord3->text();
     //组成sql语句查找
@@ -244,9 +242,15 @@ void manager::on_bt_search2_2_clicked(){
     ptr->sql.selectUser(key);
     ui->tableView_3->setModel(ptr->sql.model2);
 }
-
-void manager::closeEvent(QCloseEvent* event){
+//关闭窗口回调
+void manager::closeEvent(QCloseEvent *event)
+{
     this->hide();
     this->parentWidget()->show();
 }
-
+//选择商品图片按钮回调
+QString manager::on_selectPicture_clicked(){
+    QString fileName = QFileDialog::getOpenFileName(this,tr("文件对话框！"),"F:",tr("图片文件(*png *jpg);;"));
+    qDebug()<<"filename : "<<fileName;
+    return fileName;
+}

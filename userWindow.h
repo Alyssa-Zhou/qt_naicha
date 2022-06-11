@@ -5,6 +5,7 @@
 #include "specifications.h"
 #include "sql.h"
 #include "mainwindow.h"
+#include <QButtonGroup>
 
 namespace Ui { class user; }
 
@@ -19,12 +20,19 @@ public:
 
 private slots:
     void on_spec_Btn_clicked(Goods *good);
+    void pushcart(Goods *good, int i);
 
 private:
     void fixedOptions(specifications *s, int y, int h);
     void init();
     Ui::user *ui;
     MainWindow *ptr = NULL;
+    QButtonGroup *bgCup;
+    QButtonGroup *bgTem;
+    QButtonGroup *bgSweet;
+    QButtonGroup *bgAddi;
+    int index = 0;
+    void checkout();
 
 };
 
