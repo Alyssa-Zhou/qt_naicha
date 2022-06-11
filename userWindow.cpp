@@ -233,8 +233,8 @@ void userWindow::checkout(){
 
 }
 
-void userWindow::closeEvent(QCloseEvent *event)
-{
+void userWindow::closeEvent(QCloseEvent *event){
+    Q_UNUSED(event);
     this->hide();
     this->parentWidget()->show();
 }

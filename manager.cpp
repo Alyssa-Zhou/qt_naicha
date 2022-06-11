@@ -12,10 +12,13 @@ manager::manager(QWidget* parent) : QMainWindow(parent), ui(new Ui::manager) {
     this->ptr->sql.selectGoods("", (int)NULL, 0, 100);
     this->InitComboBox();
 
-    //表格列宽自适应
+    //表格列宽和行高自适应
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableView_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableView_2->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableView_3->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableView_3->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 manager::~manager() { delete ui; }
@@ -72,7 +75,7 @@ void manager::on_btn_addG_clicked()
     QTextEdit* input4 = new QTextEdit(&dialog);
     form.addRow(value4, input4);
 
-    QString value5 = QString("图片：");
+    QString value5 = QString("图片路径：");
     QPushButton *selectPicture = new QPushButton("选择",&dialog);
     QString filePath="";
     connect(selectPicture, &QPushButton::clicked, [&](){
@@ -243,11 +246,12 @@ void manager::on_btn_searchU_clicked()
     ui->tableView_3->setModel(ptr->sql.model2);
 }
 //关闭窗口回调
-void manager::closeEvent(QCloseEvent *event)
-{
+void manager::closeEvent(QCloseEvent *event){
+    Q_UNUSED(event);
     this->hide();
     this->parentWidget()->show();
 }
+
 //选择商品图片按钮回调
 QString manager::on_selectPicture_clicked(){
     QString fileName = QFileDialog::getOpenFileName(this,tr("文件对话框！"),"F:",tr("图片文件(*png *jpg);;"));

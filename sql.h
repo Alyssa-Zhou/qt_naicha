@@ -9,10 +9,6 @@
 
 #define INTMAX 0x3f3f3f3f
 
-// 除 ID 以外的键名
-static QStringList goodsColumns = {"name", "price", "introduction", "photoPath"};
-static QStringList orderColumns = {"clientName", "goodsName", "orderDate", "orderTime", "cupSize", "temperature",
-                           "sweetness", "additionalIngredients", "orderState"};
 // 用户类
 struct UserInfo{
     UserInfo() {}
@@ -66,6 +62,8 @@ public:
     Goods* findGood(int id);
     int countGoods();
     void initCounts();
+
+    void visualizeTable(QStandardItemModel* mdl, QStringList* tbl); // 可视化数据表
 
     QSqlQuery *query;
 

@@ -26,7 +26,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
+    mainwindow.cpp \
     manager.cpp \
     qsteeing.cpp \
     specifications.cpp \
@@ -52,3 +52,10 @@ FORMS += \
 
 RESOURCES += \
     image.qrc
+
+DISTFILES += \
+    Resources/多肉桃桃.jpg \
+    Resources/多肉葡萄冻.jpg \
+    Resources/满杯红柚.jpg \
+    Resources/芝芝多肉杨梅.jpg \
+    Resources/轻芒芒甘露.jpg
