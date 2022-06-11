@@ -23,7 +23,6 @@ void manager::on_btn_search_clicked() {
     //组成sql语句查找
     qDebug() << "search:" << curRow << relationship << key;
 
-    // NOTE: bug已修复
     if(key == "" || curRow == "") ptr->sql.selectGoods();   // 如果没输入内容，就显示所有商品
     else if (curRow == "商品名称") ptr->sql.selectGoods(key);
     else if (curRow == "商品编号ID") ptr->sql.selectGoods("", key.toInt());
@@ -141,7 +140,7 @@ void manager::on_bt_search2_clicked(){
 
     // TODO: 显示界面(查询结果bug已修复)
     ptr->sql.selectOrder(key, minDate, maxDate);
-    ui->tableView_2->setModel(ptr->sql.model2);
+    ui->tableView_2->setModel(ptr->sql.model1);
 }
 
 //新增订单
@@ -163,7 +162,7 @@ void manager::on_btn_add2_clicked(){
     QLineEdit* input4 = new QLineEdit(&dialog);
     form.addRow(value4, input4);
 
-    QString value5 = QString("商品ID：");
+    QString value5 = QString("商品名称：");
     QLineEdit* input5 = new QLineEdit(&dialog);
     form.addRow(value5, input5);
 
@@ -203,7 +202,7 @@ void manager::on_btn_add2_clicked(){
 
     // Process when OK button is clicked
     if (dialog.exec() == QDialog::Accepted) {
-        Order o1(input2->text(), input3->text(), input4->text(), input5->text().toInt()
+        Order o1(input2->text(), input5->text(), input3->text(), input4->text()
             , input6->currentText(), input7->currentText(), input8->currentText(), input9->currentText(), QString("making"));
         ptr->sql.addOrder(&o1);
         ptr->sql.selectOrder("", "", "");

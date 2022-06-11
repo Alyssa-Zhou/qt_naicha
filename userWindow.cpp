@@ -19,6 +19,7 @@ userWindow::userWindow(QWidget *parent)
 userWindow::~userWindow(){
     delete ui;
 }
+
 void userWindow::init(){
     QWidget *sawc = ui->scrollAreaWidgetContents;
     int pos_x = sawc->geometry().x()+20;

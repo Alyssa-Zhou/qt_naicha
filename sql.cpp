@@ -18,7 +18,28 @@ Sql::Sql() {
         qDebug() << "Database connected failed!";
 }
 
+// 生成insert指令
+QString mergeToQuery(QStringList key, QStringList col, QString tblName){
+    Q_ASSERT(key.length() == col.length());
+    QString str = QString("insert into %1 (").arg(tblName);
+
+    if(key[0] != "") str += QString("%1").arg(col[0]);
+    for(int i = 1; i < key.length(); i++){
+        if(key[i] != "") str += QString(", %1").arg(col[i]);
+    }
+
+    str += ") values(";
+
+    if(key[0] != "") str += QString("'%1'").arg(key[0]);
+    for(int i = 1; i < key.length(); i++){
+        if(key[i] != "") str += QString(", '%1'").arg(key[i]);
+    }
+    str += ")";
+    return str;
+}
+
 // 创建数据表
+// NOTE: ID的顺序调到前面了，原来Order的goodsID改成了goodsName
 void Sql::createTables() {
     query = new QSqlQuery;
     // 用户(用户名，密码，手机号)
@@ -26,17 +47,17 @@ void Sql::createTables() {
                                     Upassword varchar(30) not null,\
                                     phone varchar(30))");
     // 商品(名称，编号，价格，简介，图片路径)
-    query->exec("create table GoodsTbl(name varchar(30) unique not null, \
-                                    ID int primary key, \
+    query->exec("create table GoodsTbl(ID INTEGER PRIMARY KEY AUTOINCREMENT, \
+                                    name varchar(30) unique not null, \
                                     price int not null, \
                                     introduction varchar(300), \
                                     photoPath varchar(100))");
     // 订单(订单号，下单用户，下单日期，下单时间，订单商品编号，订单商品名称，杯型，温度，甜度，加料，订单状态)
-    query->exec("create table OrderTbl(ID int primary key,\
+    query->exec("create table OrderTbl(ID INTEGER PRIMARY KEY AUTOINCREMENT,\
                                     clientName varchar(30) not null,\
+                                    goodsName varchar(30) not null,\
                                     orderDate date not null,\
                                     orderTime time not null,\
-                                    goodsID int not null,\
                                     cupSize varchar(10) default 'medium',\
                                     temperature varchar(10) default 'warm',\
                                     sweetness varchar(10) default 'normal',\
@@ -63,25 +84,20 @@ bool Sql::addUser(UserInfo* usr) {
 // 添加一个商品
 bool Sql::addGoods(Goods* good) {
     query = new QSqlQuery;
-    QString str = QString("insert into GoodsTbl values('%1', %2, %3, '%4', '%5')").arg(good->name)
-        .arg(good->ID).arg(good->price).arg(good->introduction).arg(good->photoPath);
-    qDebug() << "addGoods";
-    bool flag = query->exec(str);
-    if(flag == true) numGoods++;
-    return flag;
+    QStringList key = {good->name, QString::number(good->price), good->introduction, good->photoPath};
+    QString str = mergeToQuery(key, goodsColumns, "GoodsTbl");
+    qDebug() << "addGoods" << str;
+    return query->exec(str);
 }
 
 // 添加一个订单
 bool Sql::addOrder(Order* order) {
     query = new QSqlQuery;
-    QString str = QString("insert into OrderTbl values(%1, '%2', '%3', '%4', %5, '%6', '%7', '%8', '%9', '%10')")
-        .arg(order->ID).arg(order->clientName).arg(order->orderDate).arg(order->orderTime).arg(order->goodsID)
-        .arg(order->cupSize).arg(order->temperature).arg(order->sweetness).arg(order->additionalIngredients)
-        .arg(order->state);
-    qDebug() << "addOrders";
-    bool flag = query->exec(str);
-    if(flag == true) numOrder++;
-    return flag;
+    QStringList key = {order->clientName, order->goodsName, order->orderDate, order->orderTime, order->cupSize,
+                      order->temperature, order->sweetness, order->additionalIngredients, order->state};
+    QString str = mergeToQuery(key, orderColumns, "OrderTbl");
+    qDebug() << "addOrders" << str;
+    return query->exec(str);
 }
 
 // 查找商品，每当商品列表或筛选条件有变化，调用此函数更新页面
@@ -247,17 +263,13 @@ bool Sql::deleteUser(QString name) {
 // 删除商品
 bool Sql::deleteGoods(int id) {
     query = new QSqlQuery;
-    bool flag =  query->exec(QString("delete from GoodsTbl where ID = %1").arg(id));
-    if(flag == true) numGoods--;
-    return flag;
+    return query->exec(QString("delete from GoodsTbl where ID = %1").arg(id));
 }
 
 // 删除订单
 bool Sql::deleteOrder(int id) {
     query = new QSqlQuery;
-    bool flag =  query->exec(QString("delete from OrderTbl where ID = %1").arg(id));
-    if(flag == true) numOrder--;
-    return flag;
+    return query->exec(QString("delete from OrderTbl where ID = %1").arg(id));
 }
 
 void Sql::addData() {
@@ -273,8 +285,7 @@ void Sql::addData() {
     if (!addGoods(&g2)) qDebug() << "err";
     if (!addGoods(&g3)) qDebug() << "err";
 
-    // NOTE: bug已修复
-    Order o1("user1", "2022-01-01", "14:45:11", 101, "medium", "few-ice", "half", "pearls", "making");
+    Order o1("user1", "芋泥啵啵", "2022-01-01", "14:45:11", "medium", "few-ice", "half", "pearls", "making");
     if (!addOrder(&o1)) qDebug() << "err";
 }
 
@@ -295,8 +306,7 @@ Goods* Sql::findGood(int id){
 
     query->first();
 
-    good->name = query->value(0).toString();
-    good->ID = query->value(1).toInt();
+    good->name = query->value(1).toString();
     good->price = query->value(2).toInt();
     good->introduction = query->value(3).toString();
     good->photoPath = query->value(4).toString();
@@ -308,5 +318,8 @@ Goods* Sql::findGood(int id){
 
 // 获取商品总数
 int Sql::countGoods() {
-    return numGoods;
+    query = new QSqlQuery;
+    query->exec(QString("select count(*) from GoodsTbl"));
+    query->first();
+    return query->value(0).toInt();
 }

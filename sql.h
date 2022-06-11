@@ -8,8 +8,11 @@
 #include <QStandardItemModel>
 
 #define INTMAX 0x3f3f3f3f
-static int numGoods = 0, numOrder = 0;
 
+// 除 ID 以外的键名
+static QStringList goodsColumns = {"name", "price", "introduction", "photoPath"};
+static QStringList orderColumns = {"clientName", "goodsName", "orderDate", "orderTime", "cupSize", "temperature",
+                           "sweetness", "additionalIngredients", "orderState"};
 // 用户类
 struct UserInfo{
     UserInfo() {}
@@ -21,7 +24,7 @@ struct UserInfo{
 struct Goods{
     Goods() {}
     Goods(QString name, int p, QString introduction, QString photoPath)
-        :name(name), introduction(introduction), photoPath(photoPath), ID(numGoods + 1), price(p){}
+        :name(name), introduction(introduction), photoPath(photoPath), price(p){}
     QString name, introduction, photoPath;
     int ID, price;
 };
@@ -29,12 +32,12 @@ struct Goods{
 // 订单类
 struct Order{
     Order(){}
-    Order(QString clientName, QString orderDate, QString orderTime, int goodsID, QString cupSize, QString temperature,
-            QString sweetness, QString additionalIngredients, QString state): ID(numOrder + 1), goodsID(goodsID), clientName(clientName),
+    Order(QString clientName, QString goodsName, QString orderDate, QString orderTime, QString cupSize, QString temperature,
+            QString sweetness, QString additionalIngredients, QString state):clientName(clientName), goodsName(goodsName),
             orderDate(orderDate), orderTime(orderTime), cupSize(cupSize), temperature(temperature), sweetness(sweetness),
             additionalIngredients(additionalIngredients), state(state){ }
-    int ID, goodsID;
-    QString clientName, orderDate, orderTime, cupSize, temperature, sweetness, additionalIngredients, state;
+    int ID;
+    QString clientName, goodsName, orderDate, orderTime, cupSize, temperature, sweetness, additionalIngredients, state;
 };
 
 class Sql{
@@ -62,6 +65,7 @@ public:
     bool findUser(QString name);
     Goods* findGood(int id);
     int countGoods();
+    void initCounts();
 
     QSqlQuery *query;
 
