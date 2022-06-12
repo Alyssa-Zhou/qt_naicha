@@ -47,7 +47,7 @@ void MainWindow::on_logging_Btn_clicked(){
 
     //用户界面
     this->hide();
-    userWindow *u =new userWindow(this);
+    userWindow *u =new userWindow(usr, this);
     u->show();
 }
 

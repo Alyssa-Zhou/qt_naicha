@@ -7,14 +7,29 @@
 #include <QPushButton>
 #include <QButtonGroup>
 #include <QScrollArea>
+#include <QDate>
+#include <QTime>
 
-userWindow::userWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::user){
+// 商品选项
+Q_GLOBAL_STATIC_WITH_ARGS(QStringList, cupSizeOpt, ({"medium", "large", "x-large"}));
+Q_GLOBAL_STATIC_WITH_ARGS(QStringList, temOpt, ({"ice", "few-ice", "drop-ice", "warm", "hot"}));
+Q_GLOBAL_STATIC_WITH_ARGS(QStringList, sweetOpt, ({"normal", "seven", "half", "three", "zero"}));
+Q_GLOBAL_STATIC_WITH_ARGS(QStringList, addiOpt, ({"pearls", "coconut", "sago", "taro"}));
+Q_GLOBAL_STATIC_WITH_ARGS(QStringList, cupSizeOptCN, ({"中杯", "大杯", "超大杯"}));
+Q_GLOBAL_STATIC_WITH_ARGS(QStringList, temOptCN, ({"正常冰", "少冰", "去冰", "常温", "热"}));
+Q_GLOBAL_STATIC_WITH_ARGS(QStringList, sweetOptCN, ({"标准糖", "七分糖", "半塘", "三分糖", "零糖"}));
+Q_GLOBAL_STATIC_WITH_ARGS(QStringList, addiOptCN, ({"珍珠", "椰果", "西米", "芋圆"}));
+
+userWindow::userWindow(UserInfo usr, QWidget *parent) : QMainWindow(parent), ui(new Ui::user){
     ui->setupUi(this);
     ui->tabWidget->tabBar()->setStyle(new QSteeing);
 
-    this->ptr=(MainWindow*)parentWidget();
+    this->usr.name = usr.name;
+    this->usr.password = usr.password;
+    this->usr.phone = usr.phone;
 
+    this->ptr = (MainWindow*)parentWidget();
+    this->cart = ui->scrollAreaWidgetContents_2;
     this->init();
 }
 
@@ -29,16 +44,16 @@ void userWindow::init(){
     int pic_size =75;
 
     for (int i=1; i <= ptr->sql.countGoods(); i++){
-        QLabel *title = new QLabel(ptr->sql.findGood(i)->name,sawc);
+        QLabel *title = new QLabel(ptr->sql.findGood(i)->name, sawc);
         title->move(pic_size + 20, pos_y + (i-1)*80);
 
-        QLabel *introduction = new QLabel(ptr->sql.findGood(i)->introduction,sawc);
+        QLabel *introduction = new QLabel(ptr->sql.findGood(i)->introduction, sawc);
         introduction->resize(200, introduction->size().height());
         introduction->setWordWrap(true);
         introduction->setAlignment(Qt::AlignTop);
         introduction->move(pic_size + 20,pos_y + 15 + (i-1)*80);
 
-        QLabel *price = new QLabel("¥" + QString::number(ptr->sql.findGood(i)->price),sawc);
+        QLabel *price = new QLabel("¥ " + QString::number(ptr->sql.findGood(i)->price), sawc);
         price->move(pic_size + 20, pos_y + 60 + (i-1)*80);
 
         QLabel *picture = new QLabel(sawc);
@@ -47,13 +62,14 @@ void userWindow::init(){
         picture->resize(pic_size, pic_size);
         picture->move(pos_x, pos_y + (i-1)*80);
 
-        QPushButton *spec_Btn = new QPushButton("选规格",sawc);
+        QPushButton *spec_Btn = new QPushButton("选规格", sawc);
         connect(spec_Btn, &QPushButton::clicked, this, [=](){on_spec_Btn_clicked(ptr->sql.findGood(i));});
         spec_Btn->move(200, pos_y + 50 + (i-1)*80);
     }
 }
 
 // NOTE: 原来ButtonGroup的ID是从1开始的，后面读数组从0开始，现已将ID修改为从0开始
+// NOTE: 常规选项增加了默认选中
 // 所有商品固定的选型
 void userWindow::fixedOptions(specifications *s, int y, int h){
     int rowSep = 20, colSep = 15;
@@ -73,6 +89,7 @@ void userWindow::fixedOptions(specifications *s, int y, int h){
     bgCup->addButton(rbCup1, 0);
     bgCup->addButton(rbCup2, 1);
     bgCup->addButton(rbCup3, 2);
+    rbCup1->setChecked(true);   // 默认选中1
 
     // 添加选项，温度(冰量)
     int temPos_h = rbCup3->y() + rbCup3->height() + colSep;
@@ -95,6 +112,7 @@ void userWindow::fixedOptions(specifications *s, int y, int h){
     bgTem->addButton(rbTem3, 2);
     bgTem->addButton(rbTem4, 3);
     bgTem->addButton(rbTem5, 4);
+    rbTem1->setChecked(true);   // 默认选中1
 
     // 添加选项，甜度
     int sweetPos_h = rbTem5->y() + rbTem5->height() + colSep;
@@ -117,6 +135,7 @@ void userWindow::fixedOptions(specifications *s, int y, int h){
     bgSweet->addButton(rbSweet3, 2);
     bgSweet->addButton(rbSweet4, 3);
     bgSweet->addButton(rbSweet5, 4);
+    rbSweet1->setChecked(true); // 默认选中1
 
     // 添加选项，配料
     int addiPos_h = rbSweet5->y() + rbSweet5->height() + colSep;
@@ -166,11 +185,11 @@ void userWindow::on_spec_Btn_clicked(Goods *good){
     describe->move(20, title->y() + title->height());
 
     // 添加按钮，加入购物车
-    QPushButton *cart = new QPushButton(s);
-    cart->setText(QString("￥%1 加入购物袋").arg(good->price));
-    cart->setFixedSize(w, 50);
-    cart->move(0, s->height() - 50);
-    connect(cart, &QPushButton::clicked, this, [=](){pushcart(good,index);});
+    QPushButton *cartBtn = new QPushButton(QString("￥%1 加入购物袋").arg(good->price), s);
+    cartBtn->setFixedSize(w, 50);
+    cartBtn->move(0, s->height() - 50);
+    // 加入购物车并关闭选项窗口
+    connect(cartBtn, &QPushButton::clicked, this, [=](){pushcart(good); s->close();});
 
     // 固定选项
     fixedOptions(s, describe->y(), describe->height());
@@ -179,63 +198,69 @@ void userWindow::on_spec_Btn_clicked(Goods *good){
     s->show();
 }
 
+// NOTE: 由于常规选项有默认选项，无需对其合法性检测
 // 购物车
-void userWindow::pushcart(Goods *good, int i){
-    if(bgCup->checkedId() == -1){
-        QMessageBox::information(this, tr("提示 "), tr("请选择杯型！"), QMessageBox::Ok);
-        return;
-    }
-    if(bgTem->checkedId() == -1){
-        QMessageBox::information(this, tr("提示 "), tr("请选择温度(冰量)！"), QMessageBox::Ok);
-        return;
-    }
-    if(bgSweet->checkedId() == -1){
-        QMessageBox::information(this, tr("提示 "), tr("请选择甜度！"), QMessageBox::Ok);
-        return;
-    }
+void userWindow::pushcart(Goods *good){
+    orders.append(getOrder(good));
+    QMessageBox::information(this, tr("提示 "), tr("已加入购物车"), QMessageBox::Ok);   // 提示界面
 
-    QMessageBox::information(this, tr("提示 "), tr("已加入购物车"), QMessageBox::Ok);
+    // 几何参数设置
+    int picSize = 75, picSep = 10;                  // 图片尺寸， 图片边缘的间隙
+    int leftPic = cart->x() + picSep, upPic = cart->y() + picSep + 80 * (orders.length() - 1); // 图片左部和上部位置
+    int leftText = leftPic + picSize + picSep;      // 文本左部位置
 
-    QString cup[3] = { "中杯", "大杯", "超大杯" };
-    QString tem[5] = { "正常冰", "少冰", "去冰", "常温", "热" };
-    QString sweet[5] = { "标准糖", "七分糖", "半糖", "三分糖", "零糖" };
-    QString add[4] = { "珍珠", "椰果", "西米", "芋圆"};
-
-    int cupid = bgCup->checkedId();
-    int temid = bgTem->checkedId();
-    int sweetid = bgSweet->checkedId();
-    int addid = bgAddi->checkedId();
-
-    QWidget *sawc2 = ui->scrollAreaWidgetContents_2;
-    int pos_x = sawc2->geometry().x()+10;
-    int pos_y = sawc2->geometry().y()+10;
-    int pic_size =75;
-
-    QLabel *title = new QLabel(good->name,sawc2);
-    QLabel *price = new QLabel("¥" + QString::number(good->price),sawc2);
-    title->move(pic_size + 20, pos_y + i*80);
-    price->move(pic_size + 20, pos_y + 60 + i*80);
-
-    QLabel *detail = new QLabel(sawc2);
-    QString detail_text = cup[cupid] + "、" + tem[temid] + "、" + sweet[sweetid] + "、";
-    // 处理配料
-    for(int i = 0; i < 4; i++){
-        if(bgAddi->button(i)->isChecked()) detail_text += ("、" + add[addid]);
-    }
-    detail->setText(detail_text);
-    detail->move(pic_size + 20,pos_y + 15 + i*80);
-
-    QLabel *picture = new QLabel(sawc2);
+    // 加载图片
+    QLabel *picture = new QLabel(cart);
     picture->setPixmap(QPixmap(good->photoPath));
     picture->setScaledContents(true);
-    picture->resize(pic_size, pic_size);
-    picture->move(pos_x, pos_y + i*80);
+    picture->resize(picSize, picSize);
+    picture->move(leftPic, upPic);
 
-    index++;
+    // 显示商品名和价格
+    QLabel *title = new QLabel(good->name, cart);
+    QLabel *price = new QLabel("¥ " + QString::number(good->price), cart);
+    title->move(leftText, upPic);
+    price->move(leftText, upPic + 60);
+
+    // 商品常规选项
+    QString normalOptText = cupSizeOptCN->value(bgCup->checkedId()) + "、" +
+            temOptCN->value(bgTem->checkedId()) + "、" + sweetOptCN->value(bgSweet->checkedId());
+    QLabel *normalOptLbl = new QLabel(normalOptText, cart);
+    normalOptLbl->move(leftText, upPic + 20);
+
+    // 商品配料选项
+    QString addOptText = "配料：";
+    if(bgAddi->checkedId() == -1)  addOptText += "无";
+    else{
+        for(int i = 0; i < bgAddi->checkedId(); i++)
+            if(bgAddi->button(i)->isChecked()) addOptText += (addiOptCN->value(i) + "、");
+        addOptText += addiOptCN->value(bgAddi->checkedId());
+    }
+    QLabel *addOptLbl = new QLabel(addOptText, cart);
+    addOptLbl->move(leftText, upPic + 40);
 }
 
-void userWindow::checkout(){
+// 由商品和选项生成订单
+Order userWindow::getOrder(Goods *good){
+    QString date = QDate::currentDate().toString("yyyy-MM-dd"); // 获取当前日期
+    QString t = QTime::currentTime().toString("hh:mm:ss");      // 获取当前时间
+    QString addOpt = "";    // 配料
+    if(bgAddi->checkedId() != -1){
+        for(int i = 0; i < bgAddi->checkedId(); i++)
+            if(bgAddi->button(i)->isChecked()) addOpt += (addiOpt->value(i) + ", ");
+        addOpt += addiOpt->value(bgAddi->checkedId());
+    }
+    return Order(usr.name, good->name, date, t, cupSizeOpt->value(bgCup->checkedId()),
+                 temOpt->value(bgTem->checkedId()), sweetOpt->value(bgSweet->checkedId()),
+                 addOpt, "making");
+}
 
+// 结账
+void userWindow::on_checkout_Btn_clicked(){
+    foreach(Order order, orders) ptr->sql.addOrder(&order);         // 数据库添加订单
+    orders.clear();                                                 // 清空订单表
+    foreach(QLabel* btn, cart->findChildren<QLabel*>()) delete btn; // 清空购物车界面
+    QMessageBox::information(this, tr("提示 "), tr("已购买"), QMessageBox::Ok);  // 提示界面
 }
 
 void userWindow::closeEvent(QCloseEvent *event){
@@ -243,3 +268,4 @@ void userWindow::closeEvent(QCloseEvent *event){
     this->hide();
     this->parentWidget()->show();
 }
+

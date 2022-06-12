@@ -38,39 +38,38 @@ struct Order{
 
 class Sql{
 public:
+    // 构造函数与初始化
     Sql();
-    void createTables();
-
+    void createTables();    // 创建表
+    void initData();        // 初始化表中数据用于测试
+    // 添加数据
     bool addUser(UserInfo *usr);
     bool addGoods(Goods *good);
     bool addOrder(Order *order);
-
+    // 搜索数据(根据筛选条件)并可视化
     void selectUser(QString name = "");
     void selectGoods(QString name = "", int id = (int)NULL, int minPrice = 0, int maxPrice = INTMAX);
     void selectOrder(QString clientName = "", QString minDate = "", QString maxDate = "");
-
+    void visualizeTable(QStandardItemModel* mdl, QStringList* tbl); // 可视化数据表
+    // 更新数据
     bool updateUser(UserInfo *usr);
     bool updateGoods(Goods *good);
     bool updateOrder(Order *order);
-
+    // 删除数据
     bool deleteUser(QString name);
     bool deleteGoods(int id);
     bool deleteOrder(int id);
-    void addData();
-
+    // misc
     bool findUser(QString name);
     Goods* findGood(int id);
     int countGoods();
     void initCounts();
 
-    void visualizeTable(QStandardItemModel* mdl, QStringList* tbl); // 可视化数据表
-
+    // 成员变量
     QSqlQuery *query;
-
-    QStandardItemModel* model = new QStandardItemModel();
-    QStandardItemModel* model1 = new QStandardItemModel();
-    QStandardItemModel* model2 = new QStandardItemModel();
-
+    QStandardItemModel* model = new QStandardItemModel();       // 商品model
+    QStandardItemModel* model1 = new QStandardItemModel();      // 订单model
+    QStandardItemModel* model2 = new QStandardItemModel();      // 用户model
 };
 
 

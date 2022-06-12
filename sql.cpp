@@ -25,7 +25,7 @@ Sql::Sql() {
     if(db.open()){
         qDebug() << "Database connected successfully!";
         createTables();
-        addData();
+        initData();
     }
     else
         qDebug() << "Database connected failed!";
@@ -72,18 +72,18 @@ void Sql::visualizeTable(QStandardItemModel* mdl, QStringList* tbl){
 // 创建数据表
 void Sql::createTables() {
     query = new QSqlQuery;
-    // 用户(用户名，密码，手机号)
+    // 用户(ID, 用户名，密码，手机号)
     query->exec("create table UserTbl(ID INTEGER PRIMARY KEY AUTOINCREMENT, \
                                     name varchar(30), \
                                     Upassword varchar(30) not null,\
                                     phone varchar(30))");
-    // 商品(名称，编号，价格，简介，图片路径)
+    // 商品(编号，名称，价格，简介，图片路径)
     query->exec("create table GoodsTbl(ID INTEGER PRIMARY KEY AUTOINCREMENT, \
                                     name varchar(30) unique not null, \
                                     price int not null, \
                                     introduction varchar(300), \
                                     photoPath varchar(100))");
-    // 订单(订单号，下单用户，下单日期，下单时间，订单商品编号，订单商品名称，杯型，温度，甜度，加料，订单状态)
+    // 订单(订单号，下单用户，订单商品名，下单日期，下单时间，订单商品名称，杯型，温度，甜度，加料，订单状态)
     query->exec("create table OrderTbl(ID INTEGER PRIMARY KEY AUTOINCREMENT,\
                                     clientName varchar(30) not null,\
                                     goodsName varchar(30) not null,\
@@ -92,7 +92,7 @@ void Sql::createTables() {
                                     cupSize varchar(10) default 'medium',\
                                     temperature varchar(10) default 'warm',\
                                     sweetness varchar(10) default 'normal',\
-                                    additionalIngredients varchar(30) default 'null',\
+                                    additionalIngredients varchar(30),\
                                     orderState varchar(10) default 'unpaid')");
 }
 
@@ -129,7 +129,7 @@ void Sql::selectGoods(QString name, int id, int minPrice, int maxPrice) {
     query = new QSqlQuery;
 
     // 构造SQL指令
-    QString str = QString("select * from GoodsTbl where (price between %1 and %2)").arg(minPrice).arg(maxPrice);
+    QString str = QString("select * from GoodsTbl where (price between %1 and %2)").arg(minPrice, maxPrice);
     if (name != "") str = str.append(QString(" and (name = '%1')").arg(name));
     if (id != (int)NULL) str = str.append(QString(" and (id = %1)").arg(id));
     qDebug() << "selectGoods: "<< str;
@@ -140,22 +140,14 @@ void Sql::selectGoods(QString name, int id, int minPrice, int maxPrice) {
     visualizeTable(model, GoodsColsCN);                         // 可视化当前数据表
 
     // 单独添加图片
-    // BUG: 图片加载失败
     int colNum = GoodsColsCN->length();
     model->insertColumn(colNum);
     model->setHeaderData(colNum, Qt::Horizontal, "图片");
     query->first();
     for(int row = 0; query->isValid(); query->next(), row++){
         QString path = query->value(colNum).toString();
-        QImage image(path);
-        if(image.isNull()) qDebug() << "fail in load image";
-        QStandardItem *item = new QStandardItem();
-        item->setData(QVariant(QPixmap::fromImage(image)), Qt::DecorationRole);
-        if(path != "") model->setItem(row, colNum, item);
-        // 有path知乎用下面这一句就行
-        // if(path != "") model->setItem(row, colNum, new QStandardItem(QIcon(path), " "));
+        if(path != "") model->setItem(row, colNum, new QStandardItem(QIcon(path), " "));
     }
-
 }
 
 // 查找订单，需要查的时候再用，输入为筛选条件
@@ -213,8 +205,7 @@ bool Sql::updateGoods(Goods* good) {
 // 更新订单信息
 bool Sql::updateOrder(Order* order) {
     query = new QSqlQuery;
-    QString str = QString("select * from OrdersTbl where ID = %1").arg(order->ID);
-    query->exec(str);
+    query->exec(QString("select * from OrdersTbl where ID = %1").arg(order->ID));
 
     if (query->first()) { deleteOrder(order->ID); }    // 找到了，说明已有这个订单，把它删除
     return addOrder(order);    // 即可添加一条用户信息
@@ -238,7 +229,7 @@ bool Sql::deleteOrder(int id) {
     return query->exec(QString("delete from OrderTbl where ID = %1").arg(id));
 }
 
-void Sql::addData(){
+void Sql::initData(){
     // 添加管理员
     UserInfo admin(QString("admin"), QString("admin"), QString("12345678911"));
     addUser(&admin);
@@ -247,17 +238,17 @@ void Sql::addData(){
     UserInfo usr(QString("user1"), QString("123"), QString("12345678911"));
     UserInfo usr2(QString("user2"), QString("123"), QString("12345678911"));
     UserInfo usr3(QString("user3"), QString("123"), QString("12345678911"));
-    if(!addUser(&usr)) qDebug()<<"err";
-    if(!addUser(&usr2)) qDebug()<<"err";
-    if(!addUser(&usr3)) qDebug()<<"err";
+    if(!addUser(&usr))  qDebug() << "err";
+    if(!addUser(&usr2)) qDebug() << "err";
+    if(!addUser(&usr3)) qDebug() << "err";
 
     // 添加商品
     Goods g1(QString("多肉桃桃"),19, QString("优选当季新鲜水蜜桃，皮薄汁多，果肉柔软细嫩，桃香饱满，去皮去核新鲜现制，充分保留果感，清晰释放新鲜桃肉的甜净。搭配幽香琥珀兰，香甜醇净。"),QString("./Resources/多肉桃桃.jpg"));
     Goods g2(QString("轻芒芒甘露"),18, QString("当季芒果香甜浓郁，加入红柚果粒、西米与胶原脆波波，口感丰富。芒果绿烟冰沙与椰浆的比例完美平衡，带来清新的热带之风。整体口感顺滑清新，爽快过瘾"),QString("./Resources/轻芒芒甘露.jpg"));
     Goods g3(QString("多肉葡萄冻"),19, QString("2018年首创品种，当季夏黑葡萄精细处理，保留果肉完整口感。搭配清新绿妍茶底与弹弹冻，鲜爽可口"),QString("./Resources/多肉葡萄冻.jpg"));
-    if(!addGoods(&g1)) qDebug()<<"err";
-    if(!addGoods(&g2)) qDebug()<<"err";
-    if(!addGoods(&g3)) qDebug()<<"err";
+    if(!addGoods(&g1)) qDebug() << "err";
+    if(!addGoods(&g2)) qDebug() << "err";
+    if(!addGoods(&g3)) qDebug() << "err";
 
     // 添加测试订单
     Order o1("user1", "芋泥啵啵", "2022-01-01", "14:45:11", "medium", "few-ice", "half", "pearls", "down");
